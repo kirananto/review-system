@@ -1,0 +1,38 @@
+{
+    "Records": [
+        {
+            "eventVersion": "2.1",
+            "eventSource": "aws:s3",
+            "awsRegion": "ap-south-1",
+            "eventTime": "2025-07-23T06:48:43.869Z",
+            "eventName": "ObjectCreated:Put",
+            "userIdentity": {
+                "principalId": "AWS:AROA3FLD5I5RVUR3T4FJY:kirananto"
+            },
+            "requestParameters": {
+                "sourceIPAddress": "49.47.198.40"
+            },
+            "responseElements": {
+                "x-amz-request-id": "46Q4P3QRGG919KJ6",
+                "x-amz-id-2": "H+LO3J7BWHG6rT5IpoBCsH2tqTaXiB0A09Btce2Oe/Pq4HNkQ9Fk7iQQ1UKrfcSohz49vSDqlEEdDoWMkB84YwydrvfWSR4dOHdiW2gCcGg="
+            },
+            "s3": {
+                "s3SchemaVersion": "1.0",
+                "configurationId": "ZmY3MWNhNTUtYWFkNS00ZmY5LTlkZWQtMGI2NzQ1NTMyZjdk",
+                "bucket": {
+                    "name": "review-data-bucket-767398070115",
+                    "ownerIdentity": {
+                        "principalId": "AS3NSFCY8QOQJ"
+                    },
+                    "arn": "arn:aws:s3:::review-data-bucket-767398070115"
+                },
+                "object": {
+                    "key": "reviews.jl",
+                    "size": 1540,
+                    "eTag": "ee7db085a4ed5e418b4ce3979137499e",
+                    "sequencer": "00688085CBD3C49C08"
+                }
+            }
+        }
+    ]
+}

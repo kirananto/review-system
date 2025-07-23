@@ -1,0 +1,54 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚀 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🛠️ Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.23'
+
+      - name: 📦 Create Go module vendor directory
+        run: go mod vendor
+
+      - name: 🧪 Run tests with coverage
+        run: go test -v -cover -coverprofile=coverage.out ./...
+
+      - name: 📤 Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.out
+
+      - name: 🔑 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token:     ${{ secrets.AWS_SESSION_TOKEN }} #TODO: To move to OIDC Approach
+          aws-region: ap-south-1 # Corrected region from samconfig.toml
+
+      - name: ⚙️ Set up SAM
+        uses: aws-actions/setup-sam@v2
+
+      - name: 🚀 Build and deploy SAM application
+        run: |
+          sam build --template deploy/sam/template.yaml
+          sam deploy \
+            --template-file .aws-sam/build/template.yaml \
+            --stack-name review-system-app \
+            --capabilities CAPABILITY_IAM \
+            --region ap-south-1 \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --parameter-overrides DBSecretArn="${{ secrets.DB_SECRET_ARN }}" \
+            --image-repositories ReviewImporterFunction=${{ secrets.ECR_REPOSITORY_URI }}

@@ -1,0 +1,11 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "review-system-app"
+resolve_s3 = true
+s3_prefix = "review-system-app"
+region = "ap-south-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+parameter_overrides = "DBSecretArn=\"arn:aws:secretsmanager:ap-south-1:767398070115:secret:review-system/db-credentials-STtmAK\""
+image_repositories = ["ReviewImporterFunction=767398070115.dkr.ecr.ap-south-1.amazonaws.com/reviewsystemapp40b91ac7/reviewimporterfunction7b2cb4b4repo"]
