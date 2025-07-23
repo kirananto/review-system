@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Dedicated stack for the Review System's RDS PostgreSQL database and credentials.
+
+Parameters:
+  DBPassword:
+    Type: String
+    Description: The password for the database master user.
+    NoEcho: true
+    MinLength: 8
+
+Resources:
+  ReviewDBInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: "review-system-db"
+      Engine: postgres
+      EngineVersion: "16.3"
+      DBInstanceClass: "db.t3.micro"
+      AllocatedStorage: "20"
+      MasterUsername: "reviewadmin"
+      MasterUserPassword: !Ref DBPassword
+      DBName: "reviews"
+      PubliclyAccessible: false
+    # TODO: IMPORTANT: For production, set DeletionPolicy to 'Snapshot' or 'Retain'
+    DeletionPolicy: Delete
+
+  DBSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: "Credentials for the Review System RDS database"
+      Name: "review-system/db-credentials"
+      SecretString: !Sub
+        - '{"username":"reviewadmin","password":"${DBPassword}","engine":"postgres","host":"${DBEndpoint}","port":${DBPort},"dbname":"reviews"}'
+        - DBEndpoint: !GetAtt ReviewDBInstance.Endpoint.Address
+          DBPort: !GetAtt ReviewDBInstance.Endpoint.Port
+
+Outputs:
+  DBSecretArn:
+    Description: "ARN of the database credentials secret in AWS Secrets Manager"
+    Value: !Ref DBSecret

@@ -1,0 +1,130 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Review System for ZUZU
+
+  SAM template for the review system microservice
+
+Globals:
+  Function:
+    Timeout: 30
+
+Parameters:
+  DBSecretArn:
+    Type: String
+    Description: The ARN of the secret in AWS Secrets Manager containing the DB credentials.
+  VpcId:
+    Type: String
+    Description: The ID of the VPC where the Lambda function should be deployed.
+    Default: "vpc-093a3a9e6470e3619"
+  SubnetIds:
+    Type: CommaDelimitedList
+    Description: A comma-separated list of subnet IDs within the VPC.
+    Default: "subnet-06c53ce3e96ce6502,subnet-05f70cb34f80aea37,subnet-06ba22865b2bf1ca7,subnet-02d61dc0fd5694a04,subnet-0e4216dcc6ff9ef3c,subnet-06513161bc1bee164"
+  SecurityGroupIds:
+    Type: CommaDelimitedList
+    Description: A comma-separated list of security group IDs for the Lambda function.
+    Default: "sg-00758af46e2ff1ae7"
+
+Resources:
+  ReviewDataBucket:
+    Type: AWS::S3::Bucket
+    DependsOn: S3ToSqsPolicy
+    Properties:
+      BucketName: !Sub "review-data-bucket-${AWS::AccountId}"
+      NotificationConfiguration:
+        QueueConfigurations:
+          - Event: "s3:ObjectCreated:*"
+            Queue: !GetAtt ReviewDataQueue.Arn
+
+  ReviewDataQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: "ReviewDataQueue"
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt ReviewDataDLQ.Arn
+        maxReceiveCount: 5
+
+  S3ToSqsPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref ReviewDataQueue
+      PolicyDocument:
+        Statement:
+          - Action: "SQS:SendMessage"
+            Effect: "Allow"
+            Resource: !GetAtt ReviewDataQueue.Arn
+            Principal:
+              Service: "s3.amazonaws.com"
+            Condition:
+              ArnEquals:
+                "aws:SourceArn": !Sub "arn:aws:s3:::review-data-bucket-${AWS::AccountId}"
+
+  ReviewDataDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: "ReviewDataDLQ"
+      
+  ReviewImporterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          LOG_LEVEL: "DEBUG"
+          LOG_DIR: "./logs"
+          DATABASE_DSN: !Sub
+            - "host=${Host} user=${Username} password=${Password} dbname=${DBName} port=${Port} sslmode=require"
+            - Host: !Join [ "", [ "{{resolve:secretsmanager:", !Ref DBSecretArn, ":SecretString:host}}" ] ]
+              Username: !Join [ "", [ "{{resolve:secretsmanager:", !Ref DBSecretArn, ":SecretString:username}}" ] ]
+              Password: !Join [ "", [ "{{resolve:secretsmanager:", !Ref DBSecretArn, ":SecretString:password}}" ] ]
+              DBName: !Join [ "", [ "{{resolve:secretsmanager:", !Ref DBSecretArn, ":SecretString:dbname}}" ] ]
+              Port: !Join [ "", [ "{{resolve:secretsmanager:", !Ref DBSecretArn, ":SecretString:port}}" ] ]
+      VpcConfig:
+        SecurityGroupIds: !Ref SecurityGroupIds
+        SubnetIds: !Ref SubnetIds
+      Policies:
+        - VPCAccessPolicy: {}
+        - S3ReadPolicy:
+            BucketName: !Sub "review-data-bucket-${AWS::AccountId}"
+      FunctionUrlConfig:
+        AuthType: AWS_IAM
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt ReviewDataQueue.Arn
+            BatchSize: 1
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref ApiGateway
+    Metadata:
+      DockerTag: go-review-importer-v1-amd64
+      DockerContext: ../../
+      Dockerfile: Dockerfile
+
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization'"
+        AllowOrigin: "'*'"
+        
+Outputs:
+  ReviewImporterFunction:
+    Description: "Review Importer Lambda Function ARN"
+    Value: !GetAtt ReviewImporterFunction.Arn
+  ReviewDataBucket:
+    Description: "S3 bucket for review data"
+    Value: !Ref ReviewDataBucket
+  ReviewDataQueue:
+    Description: "SQS queue for review data"
+    Value: !GetAtt ReviewDataQueue.Arn

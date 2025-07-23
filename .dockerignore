@@ -1,0 +1,13 @@
+# Git
+.git
+.gitignore
+
+# Docker
+.dockerignore
+Dockerfile
+
+# SAM
+.aws-sam/
+
+# IDE
+.vscode/
