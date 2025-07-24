@@ -3,8 +3,9 @@
 
 ## 🔴 Immediate Priorities (Must-have for POC)
 
-- [ ] Support for adding middlewares
 - [ ] Large files, notify on success/100/100 inserted, how many failed etc. in logs/slack etc & Store in db, audit log
+- [ ] Cache Upsert Logic for overall data
+- [x] Support for adding middlewares
 - [x] Document Deployment Strategy - Without delay
 - [x] Explain Key Design Pattern in `README.md`
 - [x] Consistent Error Handling across all endpoints
@@ -17,9 +18,7 @@
 
 ## 🟡 Mid Priority (If time permits - Helpful for UX & Dev Experience)
 
-- [ ] Authentication Mechanism (Token/OAuth - even a stub is okay)  
 - [ ] Move Auto-Migration to CI/CD instead of running on every start  
-- [ ] Cache Upsert Logic for overall data
 
 ---
 
@@ -29,6 +28,7 @@ These are best practices or production concerns that are out of scope for now:
 
 - [ ] Hardcoded VPC configuration in CloudFormation templates  
 - [ ] Missing S3 Bucket Encryption 
+- [ ] Authentication Mechanism | Move to actual one (Most of the time we use a Third Party Service)
 - [ ] Use Production-grade IAM Policies for Lambda  
 - [ ] Restrict CORS to known domains only  
 - [ ] Add Rate Limiting to API Gateway or via middleware  

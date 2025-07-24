@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gorilla/mux"
 	"github.com/kirananto/review-system/internal/api/handler"
+	"github.com/kirananto/review-system/internal/api/middleware"
 	"github.com/kirananto/review-system/internal/api/repository"
 	"github.com/kirananto/review-system/internal/api/service"
 	"github.com/kirananto/review-system/internal/db"
@@ -47,6 +48,7 @@ func SetUpRoutes(dataSource *db.DataSource, log *logger.Logger) *mux.Router {
 
 	// API routes
 	api := r.PathPrefix("/api/v1").Subrouter()
+	api.Use(middleware.Auth)
 
 	// Initialize handlers
 	providerHandler := getProviderHandler(dataSource, log)
