@@ -27,6 +27,16 @@ func NewProviderHandler(service service.ProviderService, logger *logger.Logger) 
 	}
 }
 
+// GetProvidersList godoc
+// @Summary Get a list of providers
+// @Description Get a list of providers with optional filters
+// @ID get-providers-list
+// @Produce json
+// @Param name query string false "Provider name"
+// @Param limit query int false "Limit"
+// @Param offset query int false "Offset"
+// @Success 200 {object} response.HTTPResponse{content=response.HTTPResponseContent{results=[]review.Provider}}
+// @Router /providers [get]
 func (h *ProviderHandler) GetProvidersList(w http.ResponseWriter, r *http.Request) {
 	// Initialize with default values
 	queryParams := &dto.ProvidersQueryParams{

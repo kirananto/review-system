@@ -31,7 +31,7 @@ type Server struct {
 type ServerConfig struct {
 	DatabaseDSN string
 	RunMode     string // "local" or "lambda"
-	Port        string // e.g., ":8080"
+	Port        string // e.g., ":8000"
 	LogConfig   logger.LogConfig
 }
 
