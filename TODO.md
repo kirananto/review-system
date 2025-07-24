@@ -21,6 +21,7 @@
 These are best practices or production concerns that are out of scope for now:
 
 - [ ] Hardcoded VPC configuration in CloudFormation templates
+- [ ] Connect API Gateway to Custom domain in Route53
 - [ ] Add redrive policy from the DLQ (Dead letter queue) 
 - [ ] Move Auto-Migration to CI/CD instead of running on every start
 - [ ] Missing S3 Bucket Encryption 
