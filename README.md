@@ -289,9 +289,13 @@ sam deploy --guided \
    Due to the absence of a unique reviewer ID, it's not feasible to use a relational model for reviewers. Reviewer details will instead be stored as a field in the `comment` table.
 
 
-## 🐊 Gochas
+## 🐊 Gochas & Current Limitations
 
 - Swagger Documentation works only on localhost
+- Currently only supports upto 25K Reviews in a single file upto ~40MB. To support more than that we need to do either of the above approaches:
+  - Fan out: Chunk into smaller groups of data by invoking lambdas or using Lambda Step functions.
+  - Improve performance of a single lambda
+
 
 ## 🚧 TODO - Work in Progress
 
