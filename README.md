@@ -107,7 +107,8 @@ graph TD
 * **Clean Architecture:** Ensures maintainable, testable code.
 * **Secure:** Database credentials stored in AWS Secrets Manager.
 * **IaC:** Resources defined with SAM & CloudFormation.
-* **Zero-Downtime Deployments:** Blue-green releases with automated rollback via CodeDeploy.
+* **CI/CD**: CI/CD using Github Actions
+* **Zero-Downtime Deployments:** Blue-green releases with automated rollback.
 * **Local Development:** Dockerized PostgreSQL & easy setup.
 * **Auto-Generated Docs:** Swagger UI for API exploration.
 
