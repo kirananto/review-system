@@ -66,16 +66,6 @@ func (r *reviewRepository) CreateReview(review *reviewmodel.Review) error {
 	return r.db.Create(review).Error
 }
 
-// UpdateReview updates an existing review.
-func (r *reviewRepository) UpdateReview(review *reviewmodel.Review) error {
-	return r.db.Save(review).Error
-}
-
-// DeleteReview deletes a review by its ID.
-func (r *reviewRepository) DeleteReview(id uint) error {
-	return r.db.Delete(&reviewmodel.Review{}, id).Error
-}
-
 // GetReviews retrieves all reviews.
 // TODO: Use GetReviewsList with pagination and filters instead of this method.
 func (r *reviewRepository) GetReviews() ([]*reviewmodel.Review, error) {
