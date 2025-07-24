@@ -23,7 +23,7 @@ A scalable, event-driven microservice for ingesting, processing, and managing ho
 
 ## Tech Stack
 
-* **Language:** Go 1.21+
+* **Language:** Go 1.23+
 
 * **Frameworks & Libraries:**
 
@@ -39,16 +39,19 @@ A scalable, event-driven microservice for ingesting, processing, and managing ho
 
 * **Local Dev:** Docker, Docker Compose, PostgreSQL
 
----
 
 ## Architecture Overview
 
 This service follows **Clean Architecture** principles, separating core business logic from external dependencies.
 
+Green: Components that are already implemented
+Blue: Componenets that are yet to be implemented
+
+Production setup:
 ```mermaid
 graph TD
-  classDef current fill:#b6f0b6,stroke:#333,stroke-width:1px;
-  classDef ideal fill:#a6c8ff,stroke:#333,stroke-width:1px;
+  classDef current fill:#7FC77F,stroke:#333,stroke-width:1px;
+  classDef ideal fill:#6A9FD1,stroke:#333,stroke-width:1px;
 
   subgraph AWS_Cloud[AWS Cloud]
     direction LR
@@ -80,6 +83,21 @@ graph TD
   end
 ```
 
+Local Development:
+```mermaid
+%% Local Development Architecture
+graph TD
+  subgraph Local Development
+    direction LR
+    CLI[Importer CLI] -->|"go run cmd/importer/main.go <file>"| Processor[Processing Service]
+    Processor -->|CRUD via GORM| LocalDB[(Local PostgreSQL)]
+    Server[API Server]-->LocalDB
+    class CLI,Processor,LocalDB,Server current;
+
+    class DockerCompose,IDE ideal;
+  end
+```
+
 ---
 
 ## Features
@@ -97,7 +115,7 @@ graph TD
 
 ## Prerequisites
 
-* Go 1.21+ installed
+* Go 1.23+ installed
 * Docker & Docker Compose
 * AWS CLI & AWS SAM CLI
 * AWS credentials configured (`~/.aws/credentials`)
@@ -248,12 +266,3 @@ sam deploy --guided \
 
 ---
 
-## Contributing
-
-Contributions are welcome! Please open issues or submit PRs following our [Code of Conduct](CODE_OF_CONDUCT.md).
-
----
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
