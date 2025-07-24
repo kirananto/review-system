@@ -12,7 +12,7 @@ import (
 	"github.com/kirananto/review-system/internal/config"
 	"github.com/kirananto/review-system/internal/db"
 	"github.com/kirananto/review-system/internal/logger"
-	reviewmodel "github.com/kirananto/review-system/pkg/review"
+	models "github.com/kirananto/review-system/internal/models"
 )
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 
 	dataSource := db.NewDataSource(cfg.Database.DSN)
 
-	dataSource.Db.AutoMigrate(&reviewmodel.Provider{}, &reviewmodel.Hotel{}, &reviewmodel.Review{}, &reviewmodel.ProviderHotel{})
+	dataSource.Db.AutoMigrate(&models.Provider{}, &models.Hotel{}, &models.Review{}, &models.ProviderHotel{})
 
 	log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
 	repository := repository.NewReviewRepository(dataSource)

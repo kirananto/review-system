@@ -2,16 +2,16 @@ package repository
 
 import (
 	"github.com/kirananto/review-system/internal/api/dto"
-	reviewmodel "github.com/kirananto/review-system/pkg/review"
+	models "github.com/kirananto/review-system/internal/models"
 )
 
 // GetProviderHotelsList retrieves all provider hotels.
-func (r *reviewRepository) GetProviderHotelsList(queryParams *dto.ProviderHotelsQueryParams) ([]*reviewmodel.ProviderHotel, int, error) {
-	var providerHotels []*reviewmodel.ProviderHotel
+func (r *reviewRepository) GetProviderHotelsList(queryParams *dto.ProviderHotelsQueryParams) ([]*models.ProviderHotel, int, error) {
+	var providerHotels []*models.ProviderHotel
 	var totalCount int64
 
 	// Initialize query
-	dbQuery := r.db.Model(&reviewmodel.ProviderHotel{})
+	dbQuery := r.db.Model(&models.ProviderHotel{})
 
 	// Build conditions map with only non-zero values
 	conditions := make(map[string]interface{})
@@ -45,8 +45,8 @@ func (r *reviewRepository) GetProviderHotelsList(queryParams *dto.ProviderHotels
 }
 
 // GetProviderHotel retrieves a provider-specific hotel mapping.
-func (r *reviewRepository) GetProviderHotel(providerID uint, hotelID uint) (*reviewmodel.ProviderHotel, error) {
-	var providerHotel reviewmodel.ProviderHotel
+func (r *reviewRepository) GetProviderHotel(providerID uint, hotelID uint) (*models.ProviderHotel, error) {
+	var providerHotel models.ProviderHotel
 	if err := r.db.Where("provider_id = ? AND hotel_id = ?", providerID, hotelID).First(&providerHotel).Error; err != nil {
 		return nil, err
 	}
@@ -54,11 +54,11 @@ func (r *reviewRepository) GetProviderHotel(providerID uint, hotelID uint) (*rev
 }
 
 // CreateProviderHotel creates a new provider-specific hotel mapping.
-func (r *reviewRepository) CreateProviderHotel(providerHotel *reviewmodel.ProviderHotel) error {
+func (r *reviewRepository) CreateProviderHotel(providerHotel *models.ProviderHotel) error {
 	return r.db.Create(providerHotel).Error
 }
 
 // UpdateProviderHotel updates an existing provider-specific hotel mapping.
-func (r *reviewRepository) UpdateProviderHotel(providerHotel *reviewmodel.ProviderHotel) error {
+func (r *reviewRepository) UpdateProviderHotel(providerHotel *models.ProviderHotel) error {
 	return r.db.Save(providerHotel).Error
 }

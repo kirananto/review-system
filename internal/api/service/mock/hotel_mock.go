@@ -11,7 +11,7 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	dto "github.com/kirananto/review-system/internal/api/dto"
 	response "github.com/kirananto/review-system/internal/api/response"
-	review "github.com/kirananto/review-system/pkg/review"
+	"github.com/kirananto/review-system/internal/models"
 )
 
 // MockHotelService is a mock of HotelService interface.
@@ -38,7 +38,7 @@ func (m *MockHotelService) EXPECT() *MockHotelServiceMockRecorder {
 }
 
 // CreateHotel mocks base method.
-func (m *MockHotelService) CreateHotel(ctx context.Context, hotel *review.Hotel) error {
+func (m *MockHotelService) CreateHotel(ctx context.Context, hotel *models.Hotel) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateHotel", ctx, hotel)
 	ret0, _ := ret[0].(error)
@@ -66,10 +66,10 @@ func (mr *MockHotelServiceMockRecorder) DeleteHotel(ctx, id interface{}) *gomock
 }
 
 // GetHotelByID mocks base method.
-func (m *MockHotelService) GetHotelByID(ctx context.Context, id uint) (*review.Hotel, error) {
+func (m *MockHotelService) GetHotelByID(ctx context.Context, id uint) (*models.Hotel, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetHotelByID", ctx, id)
-	ret0, _ := ret[0].(*review.Hotel)
+	ret0, _ := ret[0].(*models.Hotel)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -81,10 +81,10 @@ func (mr *MockHotelServiceMockRecorder) GetHotelByID(ctx, id interface{}) *gomoc
 }
 
 // GetHotelsList mocks base method.
-func (m *MockHotelService) GetHotelsList(queryParam *dto.HotelsQueryParams) ([]*review.Hotel, int, *response.ErrorDetails) {
+func (m *MockHotelService) GetHotelsList(queryParam *dto.HotelsQueryParams) ([]*models.Hotel, int, *response.ErrorDetails) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetHotelsList", queryParam)
-	ret0, _ := ret[0].([]*review.Hotel)
+	ret0, _ := ret[0].([]*models.Hotel)
 	ret1, _ := ret[1].(int)
 	ret2, _ := ret[2].(*response.ErrorDetails)
 	return ret0, ret1, ret2
@@ -97,7 +97,7 @@ func (mr *MockHotelServiceMockRecorder) GetHotelsList(queryParam interface{}) *g
 }
 
 // UpdateHotel mocks base method.
-func (m *MockHotelService) UpdateHotel(ctx context.Context, hotel *review.Hotel) error {
+func (m *MockHotelService) UpdateHotel(ctx context.Context, hotel *models.Hotel) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateHotel", ctx, hotel)
 	ret0, _ := ret[0].(error)

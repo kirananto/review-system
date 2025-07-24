@@ -2,16 +2,16 @@ package repository
 
 import (
 	"github.com/kirananto/review-system/internal/api/dto"
-	reviewmodel "github.com/kirananto/review-system/pkg/review"
+	models "github.com/kirananto/review-system/internal/models"
 )
 
 // GetProvidersList retrieves providers with pagination and filters
-func (r *reviewRepository) GetProvidersList(queryParams *dto.ProvidersQueryParams) ([]*reviewmodel.Provider, int, error) {
-	var providers []*reviewmodel.Provider
+func (r *reviewRepository) GetProvidersList(queryParams *dto.ProvidersQueryParams) ([]*models.Provider, int, error) {
+	var providers []*models.Provider
 	var totalCount int64
 
 	// Initialize query
-	dbQuery := r.db.Model(&reviewmodel.Provider{})
+	dbQuery := r.db.Model(&models.Provider{})
 
 	// Apply filters
 	if queryParams.Name != "" {
@@ -36,8 +36,8 @@ func (r *reviewRepository) GetProvidersList(queryParams *dto.ProvidersQueryParam
 }
 
 // GetProviderByID retrieves a provider by its ID.
-func (r *reviewRepository) GetProviderByID(id uint) (*reviewmodel.Provider, error) {
-	var provider reviewmodel.Provider
+func (r *reviewRepository) GetProviderByID(id uint) (*models.Provider, error) {
+	var provider models.Provider
 	if err := r.db.First(&provider, id).Error; err != nil {
 		return nil, err
 	}
@@ -45,8 +45,8 @@ func (r *reviewRepository) GetProviderByID(id uint) (*reviewmodel.Provider, erro
 }
 
 // GetProviderByName retrieves a provider by its name.
-func (r *reviewRepository) GetProviderByName(name string) (*reviewmodel.Provider, error) {
-	var provider reviewmodel.Provider
+func (r *reviewRepository) GetProviderByName(name string) (*models.Provider, error) {
+	var provider models.Provider
 	if err := r.db.Where("name = ?", name).First(&provider).Error; err != nil {
 		return nil, err
 	}
@@ -54,6 +54,6 @@ func (r *reviewRepository) GetProviderByName(name string) (*reviewmodel.Provider
 }
 
 // CreateProvider creates a new provider.
-func (r *reviewRepository) CreateProvider(provider *reviewmodel.Provider) error {
+func (r *reviewRepository) CreateProvider(provider *models.Provider) error {
 	return r.db.Create(provider).Error
 }

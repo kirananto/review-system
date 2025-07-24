@@ -13,13 +13,13 @@ import (
 	"github.com/kirananto/review-system/internal/api/repository"
 	"github.com/kirananto/review-system/internal/api/response"
 	"github.com/kirananto/review-system/internal/logger"
-	"github.com/kirananto/review-system/pkg/review"
+	"github.com/kirananto/review-system/internal/models"
 	"gorm.io/gorm"
 )
 
 type ReviewService interface {
-	GetReviewsList(queryParam *dto.ReviewQueryParams) ([]*review.Review, int, *response.ErrorDetails)
-	GetReviewByID(id uint) (*review.Review, *response.ErrorDetails)
+	GetReviewsList(queryParam *dto.ReviewQueryParams) ([]*models.Review, int, *response.ErrorDetails)
+	GetReviewByID(id uint) (*models.Review, *response.ErrorDetails)
 	ProcessReviews(ctx context.Context, reader io.Reader) error
 }
 
@@ -35,7 +35,7 @@ func NewReviewService(repo repository.ReviewRepository, logger *logger.Logger) R
 	}
 }
 
-func (s *reviewService) GetReviewsList(queryParam *dto.ReviewQueryParams) ([]*review.Review, int, *response.ErrorDetails) {
+func (s *reviewService) GetReviewsList(queryParam *dto.ReviewQueryParams) ([]*models.Review, int, *response.ErrorDetails) {
 	reviews, total, err := s.repo.GetReviewsList(queryParam)
 	if err != nil {
 		return nil, 0, &response.ErrorDetails{
@@ -48,7 +48,7 @@ func (s *reviewService) GetReviewsList(queryParam *dto.ReviewQueryParams) ([]*re
 	return reviews, total, nil
 }
 
-func (s *reviewService) GetReviewByID(id uint) (*review.Review, *response.ErrorDetails) {
+func (s *reviewService) GetReviewByID(id uint) (*models.Review, *response.ErrorDetails) {
 	review, err := s.repo.GetReviewByID(id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -188,7 +188,7 @@ func (s *reviewService) processRecord(ctx context.Context, data *ReviewData) err
 	}
 
 	// Create review
-	review := &review.Review{
+	review := &models.Review{
 		ProviderID:   provider.ID,
 		HotelID:      hotel.ID,
 		Rating:       data.Comment.Rating,
@@ -205,13 +205,13 @@ func (s *reviewService) processRecord(ctx context.Context, data *ReviewData) err
 	return nil
 }
 
-func (s *reviewService) getOrCreateProvider(name string) (*review.Provider, error) {
+func (s *reviewService) getOrCreateProvider(name string) (*models.Provider, error) {
 	provider, err := s.repo.GetProviderByName(name)
 	if err == nil {
 		return provider, nil
 	}
 
-	provider = &review.Provider{Name: name}
+	provider = &models.Provider{Name: name}
 	if err := s.repo.CreateProvider(provider); err != nil {
 		return nil, fmt.Errorf("failed to create provider: %w", err)
 	}
@@ -219,13 +219,13 @@ func (s *reviewService) getOrCreateProvider(name string) (*review.Provider, erro
 	return provider, nil
 }
 
-func (s *reviewService) getOrCreateHotel(name string) (*review.Hotel, error) {
+func (s *reviewService) getOrCreateHotel(name string) (*models.Hotel, error) {
 	hotel, err := s.repo.GetHotelByName(name)
 	if err == nil {
 		return hotel, nil
 	}
 
-	hotel = &review.Hotel{HotelName: name}
+	hotel = &models.Hotel{HotelName: name}
 	if err := s.repo.CreateHotel(hotel); err != nil {
 		return nil, fmt.Errorf("failed to create hotel: %w", err)
 	}
@@ -233,7 +233,7 @@ func (s *reviewService) getOrCreateHotel(name string) (*review.Hotel, error) {
 	return hotel, nil
 }
 
-func (s *reviewService) getOrCreateProviderHotel(providerID, hotelID uint, overallScore float64, reviewCount int, gradesJSON string) (*review.ProviderHotel, error) {
+func (s *reviewService) getOrCreateProviderHotel(providerID, hotelID uint, overallScore float64, reviewCount int, gradesJSON string) (*models.ProviderHotel, error) {
 	providerHotel, err := s.repo.GetProviderHotel(providerID, hotelID)
 	if err == nil {
 		// Update existing record
@@ -247,7 +247,7 @@ func (s *reviewService) getOrCreateProviderHotel(providerID, hotelID uint, overa
 	}
 
 	// Create new record
-	providerHotel = &review.ProviderHotel{
+	providerHotel = &models.ProviderHotel{
 		ProviderID:   providerID,
 		HotelID:      hotelID,
 		OverallScore: overallScore,

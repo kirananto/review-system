@@ -17,8 +17,8 @@ import (
 	"github.com/kirananto/review-system/internal/api/service"
 	"github.com/kirananto/review-system/internal/db"
 	"github.com/kirananto/review-system/internal/logger"
+	models "github.com/kirananto/review-system/internal/models"
 	"github.com/kirananto/review-system/internal/s3"
-	reviewmodel "github.com/kirananto/review-system/pkg/review"
 )
 
 type Server struct {
@@ -70,7 +70,7 @@ func NewServer(cfg *ServerConfig) (*Server, error) {
 
 	dataSource := db.NewDataSource(cfg.DatabaseDSN)
 
-	dataSource.Db.AutoMigrate(&reviewmodel.Provider{}, &reviewmodel.Hotel{}, &reviewmodel.Review{}, &reviewmodel.ProviderHotel{})
+	dataSource.Db.AutoMigrate(&models.Provider{}, &models.Hotel{}, &models.Review{}, &models.ProviderHotel{})
 
 	router := api.SetUpRoutes(dataSource, log)
 

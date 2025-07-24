@@ -13,7 +13,7 @@ import (
 	"github.com/kirananto/review-system/internal/api/handler"
 	"github.com/kirananto/review-system/internal/api/service/mock"
 	"github.com/kirananto/review-system/internal/logger"
-	"github.com/kirananto/review-system/pkg/review"
+	"github.com/kirananto/review-system/internal/models"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,7 +27,7 @@ func TestHotelHandler_GetHotel(t *testing.T) {
 		log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
 		hotelHandler := handler.NewHotelHandler(mockService, log)
 
-		expectedHotel := &review.Hotel{
+		expectedHotel := &models.Hotel{
 			ID:        1,
 			HotelName: "Test Hotel",
 		}
@@ -48,7 +48,7 @@ func TestHotelHandler_GetHotel(t *testing.T) {
 		// Assert
 		assert.Equal(t, http.StatusOK, rr.Code)
 
-		var actualHotel review.Hotel
+		var actualHotel models.Hotel
 		err = json.Unmarshal(rr.Body.Bytes(), &actualHotel)
 		assert.NoError(t, err)
 
@@ -88,7 +88,7 @@ func TestHotelHandler_CreateHotel(t *testing.T) {
 		log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
 		hotelHandler := handler.NewHotelHandler(mockService, log)
 
-		newHotel := &review.Hotel{
+		newHotel := &models.Hotel{
 			HotelName: "Test Hotel",
 		}
 
@@ -120,7 +120,7 @@ func TestHotelHandler_UpdateHotel(t *testing.T) {
 		log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
 		hotelHandler := handler.NewHotelHandler(mockService, log)
 
-		updatedHotel := &review.Hotel{
+		updatedHotel := &models.Hotel{
 			ID:        1,
 			HotelName: "Updated Test Hotel",
 		}

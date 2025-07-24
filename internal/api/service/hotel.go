@@ -7,13 +7,13 @@ import (
 	"github.com/kirananto/review-system/internal/api/repository"
 	"github.com/kirananto/review-system/internal/api/response"
 	"github.com/kirananto/review-system/internal/logger"
-	"github.com/kirananto/review-system/pkg/review"
+	"github.com/kirananto/review-system/internal/models"
 	"gorm.io/gorm"
 )
 
 type HotelService interface {
-	GetHotelsList(queryParam *dto.HotelsQueryParams) ([]*review.Hotel, int, *response.ErrorDetails)
-	GetHotelByID(id uint) (*review.Hotel, *response.ErrorDetails)
+	GetHotelsList(queryParam *dto.HotelsQueryParams) ([]*models.Hotel, int, *response.ErrorDetails)
+	GetHotelByID(id uint) (*models.Hotel, *response.ErrorDetails)
 }
 
 type hotelService struct {
@@ -28,7 +28,7 @@ func NewHotelService(repo repository.ReviewRepository, logger *logger.Logger) Ho
 	}
 }
 
-func (s *hotelService) GetHotelsList(queryParam *dto.HotelsQueryParams) ([]*review.Hotel, int, *response.ErrorDetails) {
+func (s *hotelService) GetHotelsList(queryParam *dto.HotelsQueryParams) ([]*models.Hotel, int, *response.ErrorDetails) {
 	hotels, total, err := s.repo.GetHotelsList(queryParam)
 	if err != nil {
 		return nil, 0, &response.ErrorDetails{
@@ -41,7 +41,7 @@ func (s *hotelService) GetHotelsList(queryParam *dto.HotelsQueryParams) ([]*revi
 	return hotels, total, nil
 }
 
-func (s *hotelService) GetHotelByID(id uint) (*review.Hotel, *response.ErrorDetails) {
+func (s *hotelService) GetHotelByID(id uint) (*models.Hotel, *response.ErrorDetails) {
 	hotels, err := s.repo.GetHotelByID(id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {

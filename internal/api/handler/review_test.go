@@ -13,7 +13,7 @@ import (
 	"github.com/kirananto/review-system/internal/api/handler"
 	"github.com/kirananto/review-system/internal/api/service/mock"
 	"github.com/kirananto/review-system/internal/logger"
-	"github.com/kirananto/review-system/pkg/review"
+	"github.com/kirananto/review-system/internal/models"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,7 +27,7 @@ func TestReviewHandler_GetReview(t *testing.T) {
 		log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
 		reviewHandler := handler.NewReviewHandler(mockService, log)
 
-		expectedReview := &review.Review{
+		expectedReview := &models.Review{
 			ID:         1,
 			Comment:    "Great hotel!",
 			Rating:     5,
@@ -50,14 +50,14 @@ func TestReviewHandler_GetReview(t *testing.T) {
 		// Assert
 		assert.Equal(t, http.StatusOK, rr.Code)
 
-		var actualReview review.Review
+		var actualReview models.Review
 		err = json.Unmarshal(rr.Body.Bytes(), &actualReview)
 		assert.NoError(t, err)
 
 		// We need to ignore the time difference in the assertion
-		assert.Equal(t, expectedReview.ID, actualReview.ID)
-		assert.Equal(t, expectedReview.Comment, actualReview.Comment)
-		assert.Equal(t, expectedReview.Rating, actualReview.Rating)
+		assert.Equal(t, expectedmodels.ID, actualmodels.ID)
+		assert.Equal(t, expectedmodels.Comment, actualmodels.Comment)
+		assert.Equal(t, expectedmodels.Rating, actualmodels.Rating)
 
 	})
 
