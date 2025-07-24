@@ -237,7 +237,6 @@ curl http://localhost:8000/api/v1/reviews
 
   * Use Docker Compose for DB.
 
----
 
 ## 🕸️ Deployment
 
@@ -266,6 +265,22 @@ sam deploy --guided \
 * **Traffic shifting**: 10% per minute
 * **Rollback**: Triggered on `ApiGateway5XXErrorAlarm`
 
+Yes, that's a solid explanation — you're showing that the system **fails gracefully**, **has retries**, and **prevents data loss** via SQS and DLQ.
+
+Here’s a **cleaned-up version** of your write-up that you can directly put into your README under a section like **"Failure Recovery & Reliability"**:
+
+
+### 🛡 Failure Recovery & Reliability
+
+In case of downstream failures such as database throttling or service health issues, the system is designed to recover gracefully:
+
+* Review ingestion is triggered via AWS Lambda consuming messages from an SQS queue.
+* If a Lambda fails (e.g., due to a DB error), the message is automatically retried up to 5 times (default behavior).
+* After the maximum retries, the message is moved to a **Dead Letter Queue (DLQ)** to avoid data loss.
+* DLQ can be monitored via alerts (e.g., CloudWatch Alarms), and messages can be **redriven** for reprocessing after the root cause is resolved.
+* This design ensures **at-least-once processing semantics** with **no data loss**.
+
+A redrive policy has not been configured yet, but can be easily added based on the business use case and SLA requirements.
 
 
 
