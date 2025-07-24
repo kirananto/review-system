@@ -52,15 +52,6 @@ func (r *reviewRepository) GetReviewByID(id uint) (*reviewmodel.Review, error) {
 	return &review, nil
 }
 
-// GetReview retrieves a review by its provider and provider-specific review ID.
-func (r *reviewRepository) GetReview(providerID uint, providerReviewID string) (*reviewmodel.Review, error) {
-	var review reviewmodel.Review
-	if err := r.db.Where("provider_id = ? AND provider_review_id = ?", providerID, providerReviewID).First(&review).Error; err != nil {
-		return nil, err
-	}
-	return &review, nil
-}
-
 // CreateReview creates a new review.
 func (r *reviewRepository) CreateReview(review *reviewmodel.Review) error {
 	return r.db.Create(review).Error

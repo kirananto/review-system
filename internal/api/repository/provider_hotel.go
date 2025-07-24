@@ -44,19 +44,10 @@ func (r *reviewRepository) GetProviderHotelsList(queryParams *dto.ProviderHotels
 	return providerHotels, int(totalCount), nil
 }
 
-// GetProviderHotelByID retrieves a provider hotel by its ID.
-func (r *reviewRepository) GetProviderHotelByID(id uint) (*reviewmodel.ProviderHotel, error) {
-	var providerHotel reviewmodel.ProviderHotel
-	if err := r.db.First(&providerHotel, id).Error; err != nil {
-		return nil, err
-	}
-	return &providerHotel, nil
-}
-
 // GetProviderHotel retrieves a provider-specific hotel mapping.
-func (r *reviewRepository) GetProviderHotel(providerID uint, providerHotelID string) (*reviewmodel.ProviderHotel, error) {
+func (r *reviewRepository) GetProviderHotel(providerID uint, hotelID uint) (*reviewmodel.ProviderHotel, error) {
 	var providerHotel reviewmodel.ProviderHotel
-	if err := r.db.Where("provider_id = ? AND provider_hotel_id = ?", providerID, providerHotelID).First(&providerHotel).Error; err != nil {
+	if err := r.db.Where("provider_id = ? AND hotel_id = ?", providerID, hotelID).First(&providerHotel).Error; err != nil {
 		return nil, err
 	}
 	return &providerHotel, nil
@@ -70,9 +61,4 @@ func (r *reviewRepository) CreateProviderHotel(providerHotel *reviewmodel.Provid
 // UpdateProviderHotel updates an existing provider-specific hotel mapping.
 func (r *reviewRepository) UpdateProviderHotel(providerHotel *reviewmodel.ProviderHotel) error {
 	return r.db.Save(providerHotel).Error
-}
-
-// DeleteProviderHotel deletes a provider hotel by its ID.
-func (r *reviewRepository) DeleteProviderHotel(id uint) error {
-	return r.db.Delete(&reviewmodel.ProviderHotel{}, id).Error
 }

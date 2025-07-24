@@ -3,9 +3,10 @@ package dto
 import "time"
 
 type ReviewRequest struct {
-	ProductID string  `json:"product_id"`
-	Rating    float32 `json:"rating"`
-	Comment   string  `json:"comment"`
+	ProductID  string  `json:"product_id"`
+	Rating     float32 `json:"rating"`
+	ExternalID string  `json:"external_id"`
+	Comment    string  `json:"comment"`
 }
 
 type ReviewResponse struct {
