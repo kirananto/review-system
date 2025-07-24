@@ -2,6 +2,11 @@
 
 A scalable, event-driven microservice for ingesting, processing, and managing hotel review data. Built in Go with a serverless AWS architecture, this service offers a robust foundation for data ingestion pipelines and a full CRUD REST API.
 
+Live Deployed URL: 
+```
+curl --location --request GET 'https://qzjg5i6mdj.execute-api.ap-south-1.amazonaws.com/Prod/api/v1/reviews' \
+--header 'Authorization: Bearer secret'
+```
 
 ## 📚 Table of Contents 
 
