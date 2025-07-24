@@ -218,8 +218,10 @@ curl http://localhost:8000/api/v1/reviews
 | Health Check | GET    | `/api/v1/health`       | Server health status |
 | Providers    | POST   | `/api/v1/providers`    | Create a provider    |
 |              | GET    | `/api/v1/providers`    | List providers       |
-| Hotels       | POST   | `/api/v1/hotels`       | Create a hotel       |
+| Hotels       | GET    | `/api/v1/hotels`       | Read hotel list      |
+|              | POST   | `/api/v1/hotels`       | Create a hotel       |
 |              | PUT    | `/api/v1/hotels/{id}`  | Update a hotel       |
+| Provider Hotel| GET    | `/api/v1/provider-hotels`  | Get list of associations between Provider & Hotel       |
 | Reviews      | GET    | `/api/v1/reviews`      | List reviews         |
 |              | GET    | `/api/v1/reviews/{id}` | Get review by ID     |
 
