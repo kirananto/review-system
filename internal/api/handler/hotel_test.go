@@ -10,7 +10,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/gorilla/mux"
+	"github.com/kirananto/review-system/internal/api/dto"
 	"github.com/kirananto/review-system/internal/api/handler"
+	"github.com/kirananto/review-system/internal/api/response"
 	"github.com/kirananto/review-system/internal/api/service/mock"
 	"github.com/kirananto/review-system/internal/logger"
 	"github.com/kirananto/review-system/internal/models"
@@ -32,7 +34,7 @@ func TestHotelHandler_GetHotel(t *testing.T) {
 			HotelName: "Test Hotel",
 		}
 
-		mockService.EXPECT().GetHotelByID(gomock.Any(), uint(1)).Return(expectedHotel, nil)
+		mockService.EXPECT().GetHotelByID(uint(1)).Return(expectedHotel, nil)
 
 		req, err := http.NewRequest("GET", "/hotels/1", nil)
 		assert.NoError(t, err)
@@ -48,8 +50,13 @@ func TestHotelHandler_GetHotel(t *testing.T) {
 		// Assert
 		assert.Equal(t, http.StatusOK, rr.Code)
 
+		var resp response.HTTPResponse
+		err = json.Unmarshal(rr.Body.Bytes(), &resp)
+		assert.NoError(t, err)
+
 		var actualHotel models.Hotel
-		err = json.Unmarshal(rr.Body.Bytes(), &actualHotel)
+		actualHotelBytes, _ := json.Marshal(resp.Content)
+		err = json.Unmarshal(actualHotelBytes, &actualHotel)
 		assert.NoError(t, err)
 
 		assert.Equal(t, expectedHotel.ID, actualHotel.ID)
@@ -62,7 +69,11 @@ func TestHotelHandler_GetHotel(t *testing.T) {
 		log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
 		hotelHandler := handler.NewHotelHandler(mockService, log)
 
-		mockService.EXPECT().GetHotelByID(gomock.Any(), uint(1)).Return(nil, errors.New("not found"))
+		mockService.EXPECT().GetHotelByID(uint(1)).Return(nil, &response.ErrorDetails{
+			Code:    http.StatusNotFound,
+			Message: "Hotel not found",
+			Error:   errors.New("not found"),
+		})
 
 		req, err := http.NewRequest("GET", "/hotels/1", nil)
 		assert.NoError(t, err)
@@ -88,11 +99,11 @@ func TestHotelHandler_CreateHotel(t *testing.T) {
 		log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
 		hotelHandler := handler.NewHotelHandler(mockService, log)
 
-		newHotel := &models.Hotel{
+		newHotel := &dto.HotelRequestBody{
 			HotelName: "Test Hotel",
 		}
 
-		mockService.EXPECT().CreateHotel(gomock.Any(), gomock.Any()).Return(nil)
+		mockService.EXPECT().CreateHotel(gomock.Any()).Return(&models.Hotel{ID: 1, HotelName: "Test Hotel"}, nil)
 
 		body, err := json.Marshal(newHotel)
 		assert.NoError(t, err)
@@ -120,12 +131,11 @@ func TestHotelHandler_UpdateHotel(t *testing.T) {
 		log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
 		hotelHandler := handler.NewHotelHandler(mockService, log)
 
-		updatedHotel := &models.Hotel{
-			ID:        1,
+		updatedHotel := &dto.HotelRequestBody{
 			HotelName: "Updated Test Hotel",
 		}
 
-		mockService.EXPECT().UpdateHotel(gomock.Any(), gomock.Any()).Return(nil)
+		mockService.EXPECT().UpdateHotel(uint(1), gomock.Any()).Return(&models.Hotel{ID: 1, HotelName: "Updated Test Hotel"}, nil)
 
 		body, err := json.Marshal(updatedHotel)
 		assert.NoError(t, err)
@@ -154,7 +164,7 @@ func TestHotelHandler_DeleteHotel(t *testing.T) {
 		log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
 		hotelHandler := handler.NewHotelHandler(mockService, log)
 
-		mockService.EXPECT().DeleteHotel(gomock.Any(), uint(1)).Return(nil)
+		mockService.EXPECT().DeleteHotel(uint(1)).Return(nil)
 
 		req, err := http.NewRequest("DELETE", "/hotels/1", nil)
 		assert.NoError(t, err)
@@ -166,6 +176,6 @@ func TestHotelHandler_DeleteHotel(t *testing.T) {
 		hotelHandler.DeleteHotel(rr, req)
 
 		// Assert
-		assert.Equal(t, http.StatusOK, rr.Code)
+		assert.Equal(t, http.StatusNoContent, rr.Code)
 	})
 }

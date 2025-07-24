@@ -19,6 +19,8 @@ type ReviewRepository interface {
 	GetHotelByID(id uint) (*models.Hotel, error)
 	GetHotelByName(name string) (*models.Hotel, error)
 	CreateHotel(hotel *models.Hotel) error
+	UpdateHotel(hotel *models.Hotel) error
+	DeleteHotel(id uint) error
 
 	// ProviderHotel methods
 	GetProviderHotelsList(queryParams *dto.ProviderHotelsQueryParams) ([]*models.ProviderHotel, int, error)

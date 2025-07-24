@@ -5,13 +5,12 @@
 package mock
 
 import (
-	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
 	dto "github.com/kirananto/review-system/internal/api/dto"
 	response "github.com/kirananto/review-system/internal/api/response"
-	"github.com/kirananto/review-system/internal/models"
+	models "github.com/kirananto/review-system/internal/models"
 )
 
 // MockHotelService is a mock of HotelService interface.
@@ -38,46 +37,47 @@ func (m *MockHotelService) EXPECT() *MockHotelServiceMockRecorder {
 }
 
 // CreateHotel mocks base method.
-func (m *MockHotelService) CreateHotel(ctx context.Context, hotel *models.Hotel) error {
+func (m *MockHotelService) CreateHotel(hotel *dto.HotelRequestBody) (*models.Hotel, *response.ErrorDetails) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateHotel", ctx, hotel)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "CreateHotel", hotel)
+	ret0, _ := ret[0].(*models.Hotel)
+	ret1, _ := ret[1].(*response.ErrorDetails)
+	return ret0, ret1
 }
 
 // CreateHotel indicates an expected call of CreateHotel.
-func (mr *MockHotelServiceMockRecorder) CreateHotel(ctx, hotel interface{}) *gomock.Call {
+func (mr *MockHotelServiceMockRecorder) CreateHotel(hotel interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateHotel", reflect.TypeOf((*MockHotelService)(nil).CreateHotel), ctx, hotel)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateHotel", reflect.TypeOf((*MockHotelService)(nil).CreateHotel), hotel)
 }
 
 // DeleteHotel mocks base method.
-func (m *MockHotelService) DeleteHotel(ctx context.Context, id uint) error {
+func (m *MockHotelService) DeleteHotel(id uint) *response.ErrorDetails {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteHotel", ctx, id)
-	ret0, _ := ret[0].(error)
+	ret := m.ctrl.Call(m, "DeleteHotel", id)
+	ret0, _ := ret[0].(*response.ErrorDetails)
 	return ret0
 }
 
 // DeleteHotel indicates an expected call of DeleteHotel.
-func (mr *MockHotelServiceMockRecorder) DeleteHotel(ctx, id interface{}) *gomock.Call {
+func (mr *MockHotelServiceMockRecorder) DeleteHotel(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteHotel", reflect.TypeOf((*MockHotelService)(nil).DeleteHotel), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteHotel", reflect.TypeOf((*MockHotelService)(nil).DeleteHotel), id)
 }
 
 // GetHotelByID mocks base method.
-func (m *MockHotelService) GetHotelByID(ctx context.Context, id uint) (*models.Hotel, error) {
+func (m *MockHotelService) GetHotelByID(id uint) (*models.Hotel, *response.ErrorDetails) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetHotelByID", ctx, id)
+	ret := m.ctrl.Call(m, "GetHotelByID", id)
 	ret0, _ := ret[0].(*models.Hotel)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*response.ErrorDetails)
 	return ret0, ret1
 }
 
 // GetHotelByID indicates an expected call of GetHotelByID.
-func (mr *MockHotelServiceMockRecorder) GetHotelByID(ctx, id interface{}) *gomock.Call {
+func (mr *MockHotelServiceMockRecorder) GetHotelByID(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHotelByID", reflect.TypeOf((*MockHotelService)(nil).GetHotelByID), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHotelByID", reflect.TypeOf((*MockHotelService)(nil).GetHotelByID), id)
 }
 
 // GetHotelsList mocks base method.
@@ -97,15 +97,16 @@ func (mr *MockHotelServiceMockRecorder) GetHotelsList(queryParam interface{}) *g
 }
 
 // UpdateHotel mocks base method.
-func (m *MockHotelService) UpdateHotel(ctx context.Context, hotel *models.Hotel) error {
+func (m *MockHotelService) UpdateHotel(id uint, hotel *dto.HotelRequestBody) (*models.Hotel, *response.ErrorDetails) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateHotel", ctx, hotel)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "UpdateHotel", id, hotel)
+	ret0, _ := ret[0].(*models.Hotel)
+	ret1, _ := ret[1].(*response.ErrorDetails)
+	return ret0, ret1
 }
 
 // UpdateHotel indicates an expected call of UpdateHotel.
-func (mr *MockHotelServiceMockRecorder) UpdateHotel(ctx, hotel interface{}) *gomock.Call {
+func (mr *MockHotelServiceMockRecorder) UpdateHotel(id, hotel interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHotel", reflect.TypeOf((*MockHotelService)(nil).UpdateHotel), ctx, hotel)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHotel", reflect.TypeOf((*MockHotelService)(nil).UpdateHotel), id, hotel)
 }
