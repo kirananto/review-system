@@ -14,14 +14,12 @@ import (
 	"github.com/kirananto/review-system/internal/api/response"
 	"github.com/kirananto/review-system/internal/logger"
 	"github.com/kirananto/review-system/pkg/review"
+	"gorm.io/gorm"
 )
 
 type ReviewService interface {
 	GetReviewsList(queryParam *dto.ReviewQueryParams) ([]*review.Review, int, *response.ErrorDetails)
-	GetReviewByID(ctx context.Context, id uint) (*review.Review, error)
-	CreateReview(ctx context.Context, review *review.Review) error
-	UpdateReview(ctx context.Context, review *review.Review) error
-	DeleteReview(ctx context.Context, id uint) error
+	GetReviewByID(id uint) (*review.Review, *response.ErrorDetails)
 	ProcessReviews(ctx context.Context, reader io.Reader) error
 }
 
@@ -50,20 +48,24 @@ func (s *reviewService) GetReviewsList(queryParam *dto.ReviewQueryParams) ([]*re
 	return reviews, total, nil
 }
 
-func (s *reviewService) GetReviewByID(ctx context.Context, id uint) (*review.Review, error) {
-	return s.repo.GetReviewByID(id)
-}
+func (s *reviewService) GetReviewByID(id uint) (*review.Review, *response.ErrorDetails) {
+	review, err := s.repo.GetReviewByID(id)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, &response.ErrorDetails{
+				Code:    http.StatusNotFound,
+				Message: "Review not found",
+				Error:   err,
+			}
+		}
+		return nil, &response.ErrorDetails{
+			Code:    http.StatusInternalServerError,
+			Message: "Internal server error",
+			Error:   err,
+		}
+	}
 
-func (s *reviewService) CreateReview(ctx context.Context, review *review.Review) error {
-	return s.repo.CreateReview(review)
-}
-
-func (s *reviewService) UpdateReview(ctx context.Context, review *review.Review) error {
-	return s.repo.UpdateReview(review)
-}
-
-func (s *reviewService) DeleteReview(ctx context.Context, id uint) error {
-	return s.repo.DeleteReview(id)
+	return review, nil
 }
 
 type ReviewData struct {

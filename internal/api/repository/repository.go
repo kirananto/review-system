@@ -31,8 +31,6 @@ type ReviewRepository interface {
 	GetReviewByID(id uint) (*reviewmodel.Review, error)
 	GetReview(providerID uint, providerReviewID string) (*reviewmodel.Review, error)
 	CreateReview(review *reviewmodel.Review) error
-	UpdateReview(review *reviewmodel.Review) error
-	DeleteReview(id uint) error
 }
 
 type reviewRepository struct {
