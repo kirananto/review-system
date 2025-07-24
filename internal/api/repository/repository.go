@@ -21,7 +21,7 @@ type ReviewRepository interface {
 	CreateHotel(hotel *reviewmodel.Hotel) error
 
 	// ProviderHotel methods
-	GetProviderHotels() ([]*reviewmodel.ProviderHotel, error)
+	GetProviderHotelsList(queryParam *dto.ProviderHotelsQueryParams) ([]*reviewmodel.ProviderHotel, int, error)
 	GetProviderHotelByID(id uint) (*reviewmodel.ProviderHotel, error)
 	GetProviderHotel(providerID uint, providerHotelID string) (*reviewmodel.ProviderHotel, error)
 	CreateProviderHotel(providerHotel *reviewmodel.ProviderHotel) error

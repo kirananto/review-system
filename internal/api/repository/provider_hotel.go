@@ -1,14 +1,33 @@
 package repository
 
-import reviewmodel "github.com/kirananto/review-system/pkg/review"
+import (
+	"github.com/kirananto/review-system/internal/api/dto"
+	reviewmodel "github.com/kirananto/review-system/pkg/review"
+)
 
 // GetProviderHotels retrieves all provider hotels.
-func (r *reviewRepository) GetProviderHotels() ([]*reviewmodel.ProviderHotel, error) {
+func (r *reviewRepository) GetProviderHotelsList(queryParams *dto.ProviderHotelsQueryParams) ([]*reviewmodel.ProviderHotel, int, error) {
 	var providerHotels []*reviewmodel.ProviderHotel
-	if err := r.db.Find(&providerHotels).Error; err != nil {
-		return nil, err
+	var totalCount int64
+
+	// Initialize query
+	dbQuery := r.db.Model(&reviewmodel.ProviderHotel{})
+
+	// Get paginated results
+	if err := dbQuery.
+		Order("updated_at desc").
+		Offset(queryParams.Offset).
+		Limit(queryParams.Limit).
+		Find(&providerHotels).Error; err != nil {
+		return nil, 0, err
 	}
-	return providerHotels, nil
+
+	// Get total count using the same conditions
+	if err := dbQuery.Count(&totalCount).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return providerHotels, int(totalCount), nil
 }
 
 // GetProviderHotelByID retrieves a provider hotel by its ID.
