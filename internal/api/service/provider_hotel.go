@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/kirananto/review-system/internal/api/dto"
@@ -13,10 +12,6 @@ import (
 
 type ProviderHotelService interface {
 	GetProviderHotelsList(queryParam *dto.ProviderHotelsQueryParams) ([]*review.ProviderHotel, int, *response.ErrorDetails)
-	GetProviderHotelByID(ctx context.Context, id uint) (*review.ProviderHotel, error)
-	CreateProviderHotel(ctx context.Context, providerHotel *review.ProviderHotel) error
-	UpdateProviderHotel(ctx context.Context, providerHotel *review.ProviderHotel) error
-	DeleteProviderHotel(ctx context.Context, id uint) error
 }
 
 type providerHotelService struct {
@@ -42,20 +37,4 @@ func (s *providerHotelService) GetProviderHotelsList(queryParam *dto.ProviderHot
 	}
 
 	return providerHotels, total, nil
-}
-
-func (s *providerHotelService) GetProviderHotelByID(ctx context.Context, id uint) (*review.ProviderHotel, error) {
-	return s.repo.GetProviderHotelByID(id)
-}
-
-func (s *providerHotelService) CreateProviderHotel(ctx context.Context, providerHotel *review.ProviderHotel) error {
-	return s.repo.CreateProviderHotel(providerHotel)
-}
-
-func (s *providerHotelService) UpdateProviderHotel(ctx context.Context, providerHotel *review.ProviderHotel) error {
-	return s.repo.UpdateProviderHotel(providerHotel)
-}
-
-func (s *providerHotelService) DeleteProviderHotel(ctx context.Context, id uint) error {
-	return s.repo.DeleteProviderHotel(id)
 }

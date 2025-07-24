@@ -22,11 +22,9 @@ type ReviewRepository interface {
 
 	// ProviderHotel methods
 	GetProviderHotelsList(queryParam *dto.ProviderHotelsQueryParams) ([]*reviewmodel.ProviderHotel, int, error)
-	GetProviderHotelByID(id uint) (*reviewmodel.ProviderHotel, error)
 	GetProviderHotel(providerID uint, providerHotelID string) (*reviewmodel.ProviderHotel, error)
 	CreateProviderHotel(providerHotel *reviewmodel.ProviderHotel) error
 	UpdateProviderHotel(providerHotel *reviewmodel.ProviderHotel) error
-	DeleteProviderHotel(id uint) error
 
 	// Review methods
 	GetReviews() ([]*reviewmodel.Review, error)
