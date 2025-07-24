@@ -160,6 +160,23 @@ func (s *reviewService) validateData(data *ReviewData) error {
 	if data.HotelID == 0 {
 		return fmt.Errorf("hotelId is required")
 	}
+
+	if data.Comment.Rating < 0 || data.Comment.Rating > 10 {
+		return fmt.Errorf("Rating should be between 0 - 10")
+	}
+
+	if data.Comment.ReviewDate == "" {
+		return fmt.Errorf("ReviewDate is required")
+	}
+	_, err := time.Parse(time.RFC3339, data.Comment.ReviewDate)
+	if err != nil {
+		return fmt.Errorf("Could not parse review date ")
+	}
+
+	if data.Comment.ReviewTitle == "" {
+		return fmt.Errorf("ReviewTitle for Comment is required")
+	}
+
 	return nil
 }
 
