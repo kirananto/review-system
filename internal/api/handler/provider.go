@@ -35,7 +35,7 @@ func NewProviderHandler(service service.ProviderService, logger *logger.Logger) 
 // @Param name query string false "Provider name"
 // @Param limit query int false "Limit"
 // @Param offset query int false "Offset"
-// @Success 200 {object} response.HTTPResponse{content=response.HTTPResponseContent{results=[]review.Provider}}
+// @Success 200 {object} response.HTTPResponse{content=response.HTTPResponseContent{results=[]models.Provider}}
 // @Router /providers [get]
 func (h *ProviderHandler) GetProvidersList(w http.ResponseWriter, r *http.Request) {
 	// Initialize with default values
@@ -81,7 +81,7 @@ func (h *ProviderHandler) GetProvidersList(w http.ResponseWriter, r *http.Reques
 // @ID get-provider-by-id
 // @Produce json
 // @Param id path int true "Provider ID"
-// @Success 200 {object} review.Provider
+// @Success 200 {object} response.HTTPResponse{content=models.Provider}
 // @Router /providers/{id} [get]
 func (h *ProviderHandler) GetProvider(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)

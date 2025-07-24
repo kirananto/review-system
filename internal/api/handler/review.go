@@ -37,7 +37,7 @@ func NewReviewHandler(service service.ReviewService, logger *logger.Logger) *Rev
 // @Param hotel_id query int false "Hotel ID"
 // @Param limit query int false "Limit"
 // @Param offset query int false "Offset"
-// @Success 200 {object} response.HTTPResponse{content=response.HTTPResponseContent{results=[]review.Review}}
+// @Success 200 {object} response.HTTPResponse{content=response.HTTPResponseContent{results=[]models.Review}}
 // @Router /reviews [get]
 func (h *ReviewHandler) GetReviewsList(w http.ResponseWriter, r *http.Request) {
 	// Initialize with default values
@@ -83,7 +83,7 @@ func (h *ReviewHandler) GetReviewsList(w http.ResponseWriter, r *http.Request) {
 // @ID get-review-by-id
 // @Produce json
 // @Param id path int true "Review ID"
-// @Success 200 {object} review.Review
+// @Success 200 {object} response.HTTPResponse{content=models.Review}
 // @Router /reviews/{id} [get]
 func (h *ReviewHandler) GetReview(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
