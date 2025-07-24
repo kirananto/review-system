@@ -30,6 +30,202 @@
                 }
             }
         },
+        "/hotels": {
+            "post": {
+                "description": "Create a new hotel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "hotels"
+                ],
+                "summary": "Create a new hotel",
+                "parameters": [
+                    {
+                        "description": "Hotel object",
+                        "name": "hotel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HotelRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.HTTPResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "$ref": "#/definitions/models.Hotel"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/hotels/{id}": {
+            "put": {
+                "description": "Update a hotel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "hotels"
+                ],
+                "summary": "Update a hotel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Hotel ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Hotel object",
+                        "name": "hotel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HotelRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.HTTPResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "$ref": "#/definitions/models.Hotel"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a hotel",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "hotels"
+                ],
+                "summary": "Delete a hotel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Hotel ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/provider-hotels": {
+            "get": {
+                "description": "Get a list of provider hotels with optional filters",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "provider-hotels"
+                ],
+                "summary": "Get a list of provider hotels",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Provider ID",
+                        "name": "provider_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Hotel ID",
+                        "name": "hotel_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.HTTPResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.HTTPResponseContent"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "results": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.ProviderHotel"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/providers": {
             "get": {
                 "description": "Get a list of providers with optional filters",
@@ -80,7 +276,7 @@
                                                         "results": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/review.Provider"
+                                                                "$ref": "#/definitions/models.Provider"
                                                             }
                                                         }
                                                     }
@@ -116,7 +312,19 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/review.Provider"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.HTTPResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "$ref": "#/definitions/models.Provider"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -172,7 +380,7 @@
                                                         "results": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/review.Review"
+                                                                "$ref": "#/definitions/models.Review"
                                                             }
                                                         }
                                                     }
@@ -208,7 +416,19 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/review.Review"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.HTTPResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "$ref": "#/definitions/models.Review"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -216,6 +436,113 @@
         }
     },
     "definitions": {
+        "dto.HotelRequestBody": {
+            "type": "object",
+            "required": [
+                "hotel_name"
+            ],
+            "properties": {
+                "hotel_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Hotel": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Provider": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ProviderHotel": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "grades": {
+                    "description": "jsonb for Postgres",
+                    "type": "string"
+                },
+                "hotel_id": {
+                    "type": "integer"
+                },
+                "overall_score": {
+                    "type": "number"
+                },
+                "provider_id": {
+                    "type": "integer"
+                },
+                "review_count": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Review": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "hotel_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lang": {
+                    "type": "string"
+                },
+                "provider_id": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "review_date": {
+                    "type": "string"
+                },
+                "reviewer_info": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "response.HTTPResponse": {
             "type": "object",
             "properties": {
@@ -241,65 +568,6 @@
                     "type": "string"
                 },
                 "results": {}
-            }
-        },
-        "review.Provider": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "description": "e.g., \"Agoda\"",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "review.Review": {
-            "type": "object",
-            "properties": {
-                "comment": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "lang": {
-                    "type": "string"
-                },
-                "provider_hotel_id": {
-                    "description": "TODO: shouldnt this be hotelID ?",
-                    "type": "integer"
-                },
-                "provider_id": {
-                    "type": "integer"
-                },
-                "provider_review_id": {
-                    "description": "TODO: isnt this same as ID?",
-                    "type": "string"
-                },
-                "rating": {
-                    "type": "number"
-                },
-                "review_date": {
-                    "type": "string"
-                },
-                "reviewer_info": {
-                    "description": "JSON-encoded reviewer info",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
             }
         }
     }

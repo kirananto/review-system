@@ -1,5 +1,75 @@
 basePath: /api/v1
 definitions:
+  dto.HotelRequestBody:
+    properties:
+      hotel_name:
+        type: string
+    required:
+    - hotel_name
+    type: object
+  models.Hotel:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.Provider:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.ProviderHotel:
+    properties:
+      created_at:
+        type: string
+      grades:
+        description: jsonb for Postgres
+        type: string
+      hotel_id:
+        type: integer
+      overall_score:
+        type: number
+      provider_id:
+        type: integer
+      review_count:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.Review:
+    properties:
+      comment:
+        type: string
+      created_at:
+        type: string
+      hotel_id:
+        type: integer
+      id:
+        type: integer
+      lang:
+        type: string
+      provider_id:
+        type: integer
+      rating:
+        type: number
+      review_date:
+        type: string
+      reviewer_info:
+        type: string
+      updated_at:
+        type: string
+    type: object
   response.HTTPResponse:
     properties:
       code:
@@ -17,46 +87,6 @@ definitions:
       prev:
         type: string
       results: {}
-    type: object
-  review.Provider:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: integer
-      name:
-        description: e.g., "Agoda"
-        type: string
-      updated_at:
-        type: string
-    type: object
-  review.Review:
-    properties:
-      comment:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: integer
-      lang:
-        type: string
-      provider_hotel_id:
-        description: 'TODO: shouldnt this be hotelID ?'
-        type: integer
-      provider_id:
-        type: integer
-      provider_review_id:
-        description: 'TODO: isnt this same as ID?'
-        type: string
-      rating:
-        type: number
-      review_date:
-        type: string
-      reviewer_info:
-        description: JSON-encoded reviewer info
-        type: string
-      updated_at:
-        type: string
     type: object
 host: localhost:8000
 info:
@@ -79,6 +109,123 @@ paths:
               type: string
             type: object
       summary: Health check endpoint
+  /hotels:
+    post:
+      consumes:
+      - application/json
+      description: Create a new hotel
+      parameters:
+      - description: Hotel object
+        in: body
+        name: hotel
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HotelRequestBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.HTTPResponse'
+            - properties:
+                content:
+                  $ref: '#/definitions/models.Hotel'
+              type: object
+      summary: Create a new hotel
+      tags:
+      - hotels
+  /hotels/{id}:
+    delete:
+      description: Delete a hotel
+      parameters:
+      - description: Hotel ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: Delete a hotel
+      tags:
+      - hotels
+    put:
+      consumes:
+      - application/json
+      description: Update a hotel
+      parameters:
+      - description: Hotel ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Hotel object
+        in: body
+        name: hotel
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HotelRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.HTTPResponse'
+            - properties:
+                content:
+                  $ref: '#/definitions/models.Hotel'
+              type: object
+      summary: Update a hotel
+      tags:
+      - hotels
+  /provider-hotels:
+    get:
+      description: Get a list of provider hotels with optional filters
+      parameters:
+      - description: Provider ID
+        in: query
+        name: provider_id
+        type: integer
+      - description: Hotel ID
+        in: query
+        name: hotel_id
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.HTTPResponse'
+            - properties:
+                content:
+                  allOf:
+                  - $ref: '#/definitions/response.HTTPResponseContent'
+                  - properties:
+                      results:
+                        items:
+                          $ref: '#/definitions/models.ProviderHotel'
+                        type: array
+                    type: object
+              type: object
+      summary: Get a list of provider hotels
+      tags:
+      - provider-hotels
   /providers:
     get:
       description: Get a list of providers with optional filters
@@ -111,7 +258,7 @@ paths:
                   - properties:
                       results:
                         items:
-                          $ref: '#/definitions/review.Provider'
+                          $ref: '#/definitions/models.Provider'
                         type: array
                     type: object
               type: object
@@ -132,7 +279,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/review.Provider'
+            allOf:
+            - $ref: '#/definitions/response.HTTPResponse'
+            - properties:
+                content:
+                  $ref: '#/definitions/models.Provider'
+              type: object
       summary: Get a provider by ID
   /reviews:
     get:
@@ -166,7 +318,7 @@ paths:
                   - properties:
                       results:
                         items:
-                          $ref: '#/definitions/review.Review'
+                          $ref: '#/definitions/models.Review'
                         type: array
                     type: object
               type: object
@@ -187,6 +339,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/review.Review'
+            allOf:
+            - $ref: '#/definitions/response.HTTPResponse'
+            - properties:
+                content:
+                  $ref: '#/definitions/models.Review'
+              type: object
       summary: Get a Review by ID
 swagger: "2.0"

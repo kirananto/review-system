@@ -89,6 +89,16 @@ func (h *HotelHandler) GetHotel(w http.ResponseWriter, r *http.Request) {
 
 	response.WriteHTTPResponse(w, http.StatusOK, resp)
 }
+
+// CreateHotel godoc
+// @Summary Create a new hotel
+// @Description Create a new hotel
+// @Tags hotels
+// @Accept json
+// @Produce json
+// @Param hotel body dto.HotelRequestBody true "Hotel object"
+// @Success 201 {object} response.HTTPResponse{content=models.Hotel}
+// @Router /hotels [post]
 func (h *HotelHandler) CreateHotel(w http.ResponseWriter, r *http.Request) {
 	var hotelDto dto.HotelRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&hotelDto); err != nil {
@@ -111,6 +121,16 @@ func (h *HotelHandler) CreateHotel(w http.ResponseWriter, r *http.Request) {
 	response.WriteHTTPResponse(w, http.StatusCreated, resp)
 }
 
+// UpdateHotel godoc
+// @Summary Update a hotel
+// @Description Update a hotel
+// @Tags hotels
+// @Accept json
+// @Produce json
+// @Param id path int true "Hotel ID"
+// @Param hotel body dto.HotelRequestBody true "Hotel object"
+// @Success 200 {object} response.HTTPResponse{content=models.Hotel}
+// @Router /hotels/{id} [put]
 func (h *HotelHandler) UpdateHotel(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -141,6 +161,14 @@ func (h *HotelHandler) UpdateHotel(w http.ResponseWriter, r *http.Request) {
 	response.WriteHTTPResponse(w, http.StatusOK, resp)
 }
 
+// DeleteHotel godoc
+// @Summary Delete a hotel
+// @Description Delete a hotel
+// @Tags hotels
+// @Produce json
+// @Param id path int true "Hotel ID"
+// @Success 204
+// @Router /hotels/{id} [delete]
 func (h *HotelHandler) DeleteHotel(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])

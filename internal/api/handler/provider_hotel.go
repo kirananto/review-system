@@ -25,6 +25,17 @@ func NewProviderHotelHandler(service service.ProviderHotelService, logger *logge
 	}
 }
 
+// GetProviderHotelsList godoc
+// @Summary Get a list of provider hotels
+// @Description Get a list of provider hotels with optional filters
+// @Tags provider-hotels
+// @Produce json
+// @Param provider_id query int false "Provider ID"
+// @Param hotel_id query int false "Hotel ID"
+// @Param limit query int false "Limit"
+// @Param offset query int false "Offset"
+// @Success 200 {object} response.HTTPResponse{content=response.HTTPResponseContent{results=[]models.ProviderHotel}}
+// @Router /provider-hotels [get]
 func (h *ProviderHotelHandler) GetProviderHotelsList(w http.ResponseWriter, r *http.Request) {
 	// Initialize with default values
 	queryParams := &dto.ProviderHotelsQueryParams{
