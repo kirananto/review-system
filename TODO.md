@@ -3,23 +3,23 @@
 
 ## 🔴 Immediate Priorities (Must-have for POC)
 
-- [ ] Fix CRUD Operations CRUD APIs
-- [ ] Add Pagination to CRUD APIs
 - [ ] Consistent Error Handling across all endpoints
-- [x] Write Unit Tests for core flows (CRUD, error handling, validation)
 - [ ] Support for adding middlewares
 - [ ] Document Deployment Strategy - Without delay
 - [ ] Explain Key Design Pattern in `README.md`
 - [ ] Large files, notify on success/100/100 inserted, how many failed etc. in logs/slack etc
-- [.] Verify working of CLI (go run cmd/importer/main.go test/data/reviews.jl)
----
+- [ ] Verify working of CLI (go run cmd/importer/main.go test/data/reviews.jl)
+- [x] Fix CRUD Operations CRUD APIs (Just bare minimum due to time constraints)
+- [x] Add Pagination to CRUD APIs
+- [x] Write Unit Tests for core flows (CRUD, error handling, validation)
+
 
 ## 🟡 Mid Priority (If time permits - Helpful for UX & Dev Experience)
 
-- [ ] Filtering & Sorting in CRUD APIs  
 - [ ] Authentication Mechanism (Token/OAuth - even a stub is okay)  
 - [ ] Move Auto-Migration to CI/CD instead of running on every start  
 - [ ] Cache Upsert Logic for overall data
+- [x] Filtering & Sorting in CRUD APIs  
 
 ---
 
@@ -34,7 +34,7 @@ These are best practices or production concerns that are out of scope for now:
 - [ ] Add Rate Limiting to API Gateway or via middleware  
 - [ ] Use Structured Logging (e.g., `zap`, `logrus`)  
 - [ ] Set up CloudWatch Alarms  
-- [ ] Add Database Indexes based on access patterns  
+- [ ] Tweak Database Indexes based on access patterns (Currently few indexes are already added) 
 - [ ] Tune Lambda Concurrency settings  
 - [ ] Tune RDS or DB Configurations for optimal use case
 
