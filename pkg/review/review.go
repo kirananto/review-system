@@ -21,6 +21,7 @@ type Hotel struct {
 // ProviderHotel maps a provider's hotel ID to our internal hotel ID.
 // It also stores provider-specific overall stats for the hotel.
 type ProviderHotel struct {
+	//TODO: what does this field mean? This table is just a mapping between provider and hotel. we dont need ID here
 	ID         uint `json:"id" gorm:"primaryKey"`
 	HotelID    uint `json:"hotel_id" gorm:"not null;index"`
 	ProviderID uint `json:"provider_id" gorm:"not null;index"`

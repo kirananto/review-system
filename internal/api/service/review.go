@@ -6,15 +6,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"time"
 
+	"github.com/kirananto/review-system/internal/api/dto"
 	"github.com/kirananto/review-system/internal/api/repository"
+	"github.com/kirananto/review-system/internal/api/response"
 	"github.com/kirananto/review-system/internal/logger"
 	"github.com/kirananto/review-system/pkg/review"
 )
 
 type ReviewService interface {
-	GetReviews(ctx context.Context) ([]*review.Review, error)
+	GetReviewsList(queryParam *dto.ReviewQueryParams) ([]*review.Review, int, *response.ErrorDetails)
 	GetReviewByID(ctx context.Context, id uint) (*review.Review, error)
 	CreateReview(ctx context.Context, review *review.Review) error
 	UpdateReview(ctx context.Context, review *review.Review) error
@@ -34,13 +37,17 @@ func NewReviewService(repo repository.ReviewRepository, logger *logger.Logger) R
 	}
 }
 
-func (s *reviewService) GetReviews(ctx context.Context) ([]*review.Review, error) {
-	reviews, err := s.repo.GetReviews()
+func (s *reviewService) GetReviewsList(queryParam *dto.ReviewQueryParams) ([]*review.Review, int, *response.ErrorDetails) {
+	reviews, total, err := s.repo.GetReviewsList(queryParam)
 	if err != nil {
-		s.logger.Info("Fetched from reviews, i don't have any reviews")
-		return nil, fmt.Errorf("failed to get reviews: %w", err)
+		return nil, 0, &response.ErrorDetails{
+			Code:    http.StatusInternalServerError,
+			Message: "Internal server error",
+			Error:   err,
+		}
 	}
-	return reviews, nil
+
+	return reviews, total, nil
 }
 
 func (s *reviewService) GetReviewByID(ctx context.Context, id uint) (*review.Review, error) {

@@ -6,7 +6,11 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/schema"
+	"github.com/kirananto/review-system/internal/api/dto"
+	"github.com/kirananto/review-system/internal/api/response"
 	"github.com/kirananto/review-system/internal/api/service"
+	"github.com/kirananto/review-system/internal/api/utils"
 	"github.com/kirananto/review-system/internal/logger"
 	"github.com/kirananto/review-system/pkg/review"
 )
@@ -15,6 +19,7 @@ import (
 type ReviewHandler struct {
 	service service.ReviewService
 	logger  *logger.Logger
+	decoder *schema.Decoder
 }
 
 // NewReviewHandler creates a new ReviewHandler
@@ -22,24 +27,46 @@ func NewReviewHandler(service service.ReviewService, logger *logger.Logger) *Rev
 	return &ReviewHandler{
 		service: service,
 		logger:  logger,
+		decoder: schema.NewDecoder(),
 	}
 }
 
-// GetReviews godoc
-// @Summary Get all reviews
-// @Description Get all reviews
-// @ID get-reviews
-// @Produce json
-// @Success 200 {array} review.Review
-// @Router /reviews [get]
-func (h *ReviewHandler) GetReviews(w http.ResponseWriter, r *http.Request) {
-	reviews, err := h.service.GetReviews(r.Context())
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+func (h *ReviewHandler) GetReviewsList(w http.ResponseWriter, r *http.Request) {
+	// Initialize with default values
+	queryParams := &dto.ReviewQueryParams{
+		Limit:  20,
+		Offset: 0,
+	}
+
+	// Parse query parameters automatically
+	if err := h.decoder.Decode(queryParams, r.URL.Query()); err != nil {
+		errResp := response.GetErrorHTTPResponseBody(http.StatusBadRequest, "Invalid query parameters")
+		response.WriteHTTPResponse(w, http.StatusBadRequest, errResp)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(reviews)
+
+	reviews, total, errorDetails := h.service.GetReviewsList(queryParams)
+	if errorDetails != nil {
+		errResp := response.GetErrorHTTPResponseBody(http.StatusInternalServerError, errorDetails.Error.Error())
+		response.WriteHTTPResponse(w, http.StatusInternalServerError, errResp)
+		return
+	}
+
+	// Get pagination links
+	prevURL, nextURL := utils.GetPaginationLinks(r, queryParams.Offset, queryParams.Limit, total)
+
+	// Create success response with pagination
+	content := &response.HTTPResponseContent{
+		Count:    total,
+		Previous: prevURL,
+		Next:     nextURL,
+		Results:  reviews,
+	}
+	resp := &response.HTTPResponse{
+		Content: content,
+	}
+
+	response.WriteHTTPResponse(w, http.StatusOK, resp)
 }
 
 // GetReview godoc
