@@ -1,141 +1,259 @@
-# Review System Microservice
+**Review System Microservice**
 
-This project is a scalable, event-driven microservice for processing and managing hotel review data. Built with Go and a serverless AWS architecture, it provides a robust foundation for handling data ingestion and a full CRUD API for data management.
+A scalable, event-driven microservice for ingesting, processing, and managing hotel review data. Built in Go with a serverless AWS architecture, this service offers a robust foundation for data ingestion pipelines and a full CRUD REST API.
+
+---
 
 ## Table of Contents
 
-- [Architecture](#architecture)
-- [Features](#features)
-- [Getting Started](#getting-started)
-- [Local Development](#local-development-and-testing)
-- [API Documentation](#api-documentation)
-- [Deployment Strategy](#deployment-strategy)
+1. [Tech Stack](#tech-stack)
+2. [Architecture Overview](#architecture-overview)
+3. [Features](#features)
+4. [Prerequisites](#prerequisites)
+5. [Installation & Configuration](#installation--configuration)
+6. [Local Development](#local-development)
+7. [Usage Examples](#usage-examples)
+8. [API Reference](#api-reference)
+9. [Testing](#testing)
+10. [Deployment](#deployment)
+11. [Contributing](#contributing)
+12. [License](#license)
 
-## Architecture
+---
 
-The microservice follows the principles of Clean Architecture, ensuring a clear separation of concerns between the API handlers, business logic (services), and data access (repositories).
+## Tech Stack
+
+* **Language:** Go 1.21+
+
+* **Frameworks & Libraries:**
+
+  * AWS Lambda Go SDK (`github.com/aws/aws-lambda-go`)
+  * AWS SDK v2 (`github.com/aws/aws-sdk-go-v2`)
+  * GORM (`gorm.io/gorm`, `gorm.io/driver/postgres`)
+  * Gorilla Mux (`github.com/gorilla/mux`)
+  * Viper & Dotenv (`github.com/spf13/viper`, `github.com/joho/godotenv`)
+  * ZeroLog (`github.com/rs/zerolog`)
+  * Swagger (`github.com/swaggo/swag`, `github.com/swaggo/http-swagger`)
+
+* **Infrastructure:** AWS SAM, CloudFormation, S3, SQS, Secrets Manager, RDS (PostgreSQL), API Gateway, CloudWatch
+
+* **Local Dev:** Docker, Docker Compose, PostgreSQL
+
+---
+
+## Architecture Overview
+
+This service follows **Clean Architecture** principles, separating core business logic from external dependencies.
 
 ```mermaid
 graph TD
-    subgraph "AWS Cloud"
-        direction LR
-        subgraph "Application Stack (SAM)"
-            APIGateway[API Gateway] -- "/api/v1/*" --> Lambda[Go Lambda Handler]
-            SQS -- Triggers --> Lambda
-            Lambda -- Reads Secret --> SecretsManager
-            Lambda -- Logs --> CloudWatch[CloudWatch Logs]
-        end
-        subgraph "Database Stack (CloudFormation)"
-            RDS[RDS PostgreSQL]
-            SecretsManager[Secrets Manager]
-        end
-        S3[S3 Bucket: review-data] -- "s3:ObjectCreated:*" --> SQS[SQS Queue]
-        Lambda -- "CRUD Operations (GORM)" --> RDS
+  classDef current fill:#b6f0b6,stroke:#333,stroke-width:1px;
+  classDef ideal fill:#a6c8ff,stroke:#333,stroke-width:1px;
+
+  subgraph AWS_Cloud[AWS Cloud]
+    direction LR
+
+    subgraph Application_Stack[Application Stack SAM]
+      direction LR
+      APIGateway[API Gateway]:::current -->|"/api/v1/* - REST APIs"| Lambda
+      APIGateway -->|"/swagger/*"| Lambda
+      SQS[ReviewsQueue SQS]:::current -->|Trigger| Lambda
+      Lambda -->|Fetch Secrets| SecretsManager(AWS Secrets Manager):::current
+      Lambda -->|Logs| CloudWatch(CloudWatch Logs):::current
+      Kinesis[Kinesis Stream]:::ideal -->|Real-time ingest| Lambda
+      Tracing[OpenTelemetry Tracing]:::ideal
+      Monitoring[Metrics & Dashboards]:::ideal
+      CodePipeline[CI/CD Pipeline]:::ideal
+
+    subgraph VPC[VPC: vpc-093a3a9e6470e3619]
+    direction LR
+    Lambda[Go Lambda Handler<br>SG: sg-00758af46e2ff1ae7]:::current
+    RDS[(PostgreSQL in RDS)]:::current
+    Redis[(Redis Cache)]:::ideal
+    Lambda -->|CRUD via GORM| RDS
+    Redis <-->|Cache hot reads| RDS
     end
 
-    subgraph "Local Development"
-        direction LR
-        CLI[CLI Command] -- "go run main.go process" --> Service(Processing Service)
-        Service -- "CRUD Operations (GORM)" --> LocalDB[Local PostgreSQL Docker]
     end
 
-    Provider((3rd Party Provider)) -- "Uploads .jl File" --> S3
+    S3[S3 Bucket: review-data-bucket]:::current -->|s3:ObjectCreated:*| SQS
+  end
 ```
+
+---
 
 ## Features
 
-- **Serverless & Event-Driven**: Built with AWS Lambda and triggered by S3/SQS for scalability and efficiency.
-- **Full CRUD API**: Provides a complete RESTful API for managing providers, hotels, and reviews.
-- **Clean Architecture**: Promotes maintainability, testability, and separation of concerns.
-- **Secure by Design**: Utilizes AWS Secrets Manager for database credentials.
-- **Infrastructure as Code**: AWS resources are managed with AWS SAM and CloudFormation.
-- **Safe Deployments**: Implements a blue-green deployment strategy with automated rollbacks.
-- **Dockerized**: Includes a `Dockerfile` and `docker-compose.yml` for a consistent local development environment.
-- **API Documentation**: Automatically generated API documentation using Swagger.
+* **Event-Driven:** Ingest reviews via S3 → SQS → Lambda pipeline.
+* **Full CRUD API:** Manage providers, hotels, and reviews through REST endpoints.
+* **Clean Architecture:** Ensures maintainable, testable code.
+* **Secure:** Database credentials stored in AWS Secrets Manager.
+* **IaC:** Resources defined with SAM & CloudFormation.
+* **Zero-Downtime Deployments:** Blue-green releases with automated rollback via CodeDeploy.
+* **Local Development:** Dockerized PostgreSQL & easy setup.
+* **Auto-Generated Docs:** Swagger UI for API exploration.
 
-## Getting Started
+---
 
-### Prerequisites
+## Prerequisites
 
-- Go 1.21+
-- Docker and Docker Compose
-- AWS SAM CLI
-- AWS CLI (configured with your credentials)
+* Go 1.21+ installed
+* Docker & Docker Compose
+* AWS CLI & AWS SAM CLI
+* AWS credentials configured (`~/.aws/credentials`)
 
-## Local Development and Testing
+---
 
-This guide explains how to set up and run the application locally.
+## Installation & Configuration
 
-### 1. Environment Setup
+1. **Clone the repo**
 
-- **Create a `.env` file**:
-  ```bash
-  cp .env.example .env
-  ```
-  The default values are pre-configured for the local Docker Compose setup.
+   ```bash
+   git clone https://github.com/kirananto/review-system.git
+   cd review-system
+   ```
 
-### 3. Testing the Application
+2. **Environment Variables**
 
-- **Run the API Server**:
-  -   Ensure `RUN_MODE=local` is in your `.env` file.
-  -   Run the command: `go run cmd/server/main.go`
-  -   The API is available at `http://localhost:8000`.
+   * Copy example and update as needed:
 
-- **Test the Data Processing Pipeline (SQS/S3)**:
-  Use the AWS SAM CLI to invoke the function locally with a sample S3 event.
-  1.  **Build the function**: `sam build`
-  2.  **Invoke the function**:
-      ```bash
-      sam local invoke ReviewImporterFunction \
-        --event test/data/events/event.json \
-        --env-vars env.json
-      ```
+     ```bash
+     cp .env.example .env
+     ```
+   * For local dev, default `.env` targets Docker Compose PostgreSQL.
 
-## API Documentation
+3. **Docker Setup (Local DB)**
 
-- **Generate the documentation**:
+   ```bash
+   docker-compose up -d postgres
+   ```
+
+---
+
+## Local Development
+
+### Run Importer CLI
+
+```bash
+go run cmd/importer/main.go /path/to/reviews.jl
+```
+
+### Start API Server
+
+```bash
+# Ensure RUN_MODE=local in .env
+go run cmd/server/main.go
+```
+
+* Server listens on `http://localhost:8000`
+
+### Invoke Lambda Locally (SAM)
+
+```bash
+sam build
+sam local invoke ReviewImporterFunction \
+  --event test/data/events/event.json \
+  --env-vars env.json
+```
+
+---
+
+## Usage Examples
+
+### Import Reviews
+
+```bash
+# Process a local file
+go run cmd/importer/main.go test/data/reviews.jl
+```
+
+### CRUD via cURL
+
+```bash
+# Create a Provider
+curl -X POST http://localhost:8000/api/v1/providers \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Agoda"}'
+
+# Get Reviews
+curl http://localhost:8000/api/v1/reviews
+```
+
+---
+
+## API Reference
+
+### Swagger UI
+
+* Generate docs:
+
   ```bash
   go run -mod=mod github.com/swaggo/swag/cmd/swag init --generalInfo cmd/server/main.go
   ```
-- **View the documentation**:
-  With the local server running, go to `http://localhost:8000/swagger/index.html`.
+* View docs at `http://localhost:8000/swagger/index.html`
 
-## Deployment Strategy
+### Key Endpoints
 
-This project uses a **two-stack approach** to protect the database and a **blue-green deployment** strategy for safe, zero-downtime updates to the application.
+| Resource     | Method | Path                   | Description          |
+| ------------ | ------ | ---------------------- | -------------------- |
+| Health Check | GET    | `/api/v1/health`       | Server health status |
+| Providers    | POST   | `/api/v1/providers`    | Create a provider    |
+|              | GET    | `/api/v1/providers`    | List providers       |
+| Hotels       | POST   | `/api/v1/hotels`       | Create a hotel       |
+|              | PUT    | `/api/v1/hotels/{id}`  | Update a hotel       |
+| Reviews      | GET    | `/api/v1/reviews`      | List reviews         |
+|              | GET    | `/api/v1/reviews/{id}` | Get review by ID     |
 
-### Step 1: Deploy the Database Stack (Once)
+---
 
-This CloudFormation stack provisions the RDS database and stores its credentials in AWS Secrets Manager.
+## Testing
 
-- **Deploy the stack**:
+* **Unit Tests**
+
   ```bash
-  aws cloudformation deploy \
-    --template-file deploy/database.yaml \
-    --stack-name review-system-database \
-    --parameter-overrides DBPassword=<YourSecurePasswordHere> \
-    --capabilities CAPABILITY_IAM
+  go test ./...
   ```
-  **Note**: You must replace the placeholder VPC and Subnet IDs in `database.yaml` with your own.
+* **Integration Tests**
 
-- **Get the Secret ARN**:
-  Retrieve the `DBSecretArn` from the stack's "Outputs" tab or via the AWS CLI.
+  * Use Docker Compose for DB.
 
-### Step 2: Deploy the Application Stack (Blue-Green)
+---
 
-This SAM stack deploys the Lambda function, API Gateway, and other application resources. The `DeploymentPreference` setting in the SAM template enables a **blue-green deployment** strategy.
+## Deployment
 
-- **How it works**:
-  1.  AWS CodeDeploy provisions a new version of your Lambda function.
-  2.  It shifts a small percentage of traffic (10% every minute) to the new version.
-  3.  It monitors the `ApiGateway5XXErrorAlarm` CloudWatch alarm. If the alarm is triggered during the deployment, CodeDeploy automatically rolls back to the previous version.
+### 1. Database Stack (One-Time)
 
-- **Deployment Command**:
-  ```bash
-  sam build --template-file deploy/sam/template.yaml && \
-  sam deploy \
-    --guided \
-    --stack-name review-system-app \
-    --parameter-overrides DBSecretArn=<Your-DB-Secret-ARN-Here> \
-    --capabilities CAPABILITY_IAM
+```bash
+aws cloudformation deploy \
+  --template-file deploy/database.yaml \
+  --stack-name review-system-database \
+  --parameter-overrides DBPassword=YOUR_DB_PASSWORD \
+  --capabilities CAPABILITY_IAM
 ```
+
+* **Retrieve** `DBSecretArn` from stack outputs.
+
+### 2. Application Stack (Blue-Green)
+
+```bash
+sam build --template-file deploy/sam/template.yaml
+sam deploy --guided \
+  --stack-name review-system-app \
+  --parameter-overrides DBSecretArn=YOUR_DB_SECRET_ARN \
+  --capabilities CAPABILITY_IAM
+```
+
+* **Traffic shifting**: 10% per minute
+* **Rollback**: Triggered on `ApiGateway5XXErrorAlarm`
+
+---
+
+## Contributing
+
+Contributions are welcome! Please open issues or submit PRs following our [Code of Conduct](CODE_OF_CONDUCT.md).
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
