@@ -69,8 +69,7 @@ func NewServer(cfg *ServerConfig) (*Server, error) {
 	log := logger.NewLogger(&cfg.LogConfig)
 
 	dataSource := db.NewDataSource(cfg.DatabaseDSN)
-	// TODO: Remove this
-	dataSource.Db.Migrator().DropTable(&models.ProviderHotel{}, &models.Review{}, &models.Hotel{}, &models.Provider{}, &models.AuditLog{})
+
 	dataSource.Db.AutoMigrate(&models.Provider{}, &models.Hotel{}, &models.Review{}, &models.ProviderHotel{})
 
 	router := api.SetUpRoutes(dataSource, log)
