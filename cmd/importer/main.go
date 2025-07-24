@@ -29,8 +29,6 @@ func main() {
 
 	dataSource := db.NewDataSource(cfg.Database.DSN)
 
-	// Drop and auto-migrate the schema
-	dataSource.Db.Migrator().DropTable(&reviewmodel.ProviderHotel{}, &reviewmodel.Review{}, &reviewmodel.Hotel{}, &reviewmodel.Provider{})
 	dataSource.Db.AutoMigrate(&reviewmodel.Provider{}, &reviewmodel.Hotel{}, &reviewmodel.Review{}, &reviewmodel.ProviderHotel{})
 
 	log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
