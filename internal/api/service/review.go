@@ -177,8 +177,7 @@ func (s *reviewService) processRecord(ctx context.Context, data *ReviewData) err
 	}
 
 	// Get or create provider-hotel mapping
-	providerHotel, err := s.getOrCreateProviderHotel(provider.ID, hotel.ID, fmt.Sprintf("%d", data.HotelID), providerData.OverallScore, providerData.ReviewCount, string(gradesJSON))
-	if err != nil {
+	if _, err := s.getOrCreateProviderHotel(provider.ID, hotel.ID, providerData.OverallScore, providerData.ReviewCount, string(gradesJSON)); err != nil {
 		return err
 	}
 
@@ -190,14 +189,13 @@ func (s *reviewService) processRecord(ctx context.Context, data *ReviewData) err
 
 	// Create review
 	review := &review.Review{
-		ProviderID:       provider.ID,
-		ProviderReviewID: fmt.Sprintf("%d", data.Comment.HotelReviewID),
-		ProviderHotelID:  providerHotel.ID,
-		Rating:           data.Comment.Rating,
-		Comment:          data.Comment.ReviewComments,
-		Lang:             "en",
-		ReviewDate:       reviewDate,
-		ReviewerInfo:     "{}", // Empty JSON object since we don't have reviewer info
+		ProviderID:   provider.ID,
+		HotelID:      hotel.ID,
+		Rating:       data.Comment.Rating,
+		Comment:      data.Comment.ReviewComments,
+		Lang:         "en",
+		ReviewDate:   reviewDate,
+		ReviewerInfo: []byte(`{}`), // Empty JSON object since we don't have reviewer info
 	}
 
 	if err := s.repo.CreateReview(review); err != nil {
@@ -235,13 +233,13 @@ func (s *reviewService) getOrCreateHotel(name string) (*review.Hotel, error) {
 	return hotel, nil
 }
 
-func (s *reviewService) getOrCreateProviderHotel(providerID, hotelID uint, providerHotelID string, overallScore float64, reviewCount int, gradesJSON string) (*review.ProviderHotel, error) {
-	providerHotel, err := s.repo.GetProviderHotel(providerID, providerHotelID)
+func (s *reviewService) getOrCreateProviderHotel(providerID, hotelID uint, overallScore float64, reviewCount int, gradesJSON string) (*review.ProviderHotel, error) {
+	providerHotel, err := s.repo.GetProviderHotel(providerID, hotelID)
 	if err == nil {
 		// Update existing record
 		providerHotel.OverallScore = overallScore
 		providerHotel.ReviewCount = reviewCount
-		providerHotel.Grades = gradesJSON
+		providerHotel.Grades = []byte(gradesJSON)
 		if err := s.repo.UpdateProviderHotel(providerHotel); err != nil {
 			return nil, fmt.Errorf("failed to update provider hotel: %w", err)
 		}
@@ -250,12 +248,11 @@ func (s *reviewService) getOrCreateProviderHotel(providerID, hotelID uint, provi
 
 	// Create new record
 	providerHotel = &review.ProviderHotel{
-		ProviderID:      providerID,
-		HotelID:         hotelID,
-		ProviderHotelID: providerHotelID,
-		OverallScore:    overallScore,
-		ReviewCount:     reviewCount,
-		Grades:          gradesJSON,
+		ProviderID:   providerID,
+		HotelID:      hotelID,
+		OverallScore: overallScore,
+		ReviewCount:  reviewCount,
+		Grades:       []byte(gradesJSON),
 	}
 
 	if err := s.repo.CreateProviderHotel(providerHotel); err != nil {

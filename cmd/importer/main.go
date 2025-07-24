@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/kirananto/review-system/internal/api/repository"
 	"github.com/kirananto/review-system/internal/api/service"
 	"github.com/kirananto/review-system/internal/config"
@@ -15,6 +16,12 @@ import (
 )
 
 func main() {
+
+	// Load .env file
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found")
+	}
+
 	cfg, err := config.LoadConfig("./")
 	if err != nil {
 		log.Fatalf("Failed to load configuration: %v", err)
@@ -22,8 +29,9 @@ func main() {
 
 	dataSource := db.NewDataSource(cfg.Database.DSN)
 
-	// Auto-migrate the schema
-	dataSource.Db.AutoMigrate(&reviewmodel.Provider{}, &reviewmodel.Hotel{}, &reviewmodel.ProviderHotel{}, &reviewmodel.Review{})
+	// Drop and auto-migrate the schema
+	dataSource.Db.Migrator().DropTable(&reviewmodel.ProviderHotel{}, &reviewmodel.Review{}, &reviewmodel.Hotel{}, &reviewmodel.Provider{})
+	dataSource.Db.AutoMigrate(&reviewmodel.Provider{}, &reviewmodel.Hotel{}, &reviewmodel.Review{}, &reviewmodel.ProviderHotel{})
 
 	log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
 	repository := repository.NewReviewRepository(dataSource)
