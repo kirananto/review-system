@@ -70,6 +70,7 @@ func NewServer(cfg *ServerConfig) (*Server, error) {
 
 	dataSource := db.NewDataSource(cfg.DatabaseDSN)
 
+	//TODO: Move Auto-Migration to CI/CD instead of running on every start
 	dataSource.Db.AutoMigrate(&models.Provider{}, &models.Hotel{}, &models.Review{}, &models.ProviderHotel{}, &models.AuditLog{})
 
 	router := api.SetUpRoutes(dataSource, log)
