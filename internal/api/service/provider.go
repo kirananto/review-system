@@ -7,13 +7,13 @@ import (
 	"github.com/kirananto/review-system/internal/api/repository"
 	"github.com/kirananto/review-system/internal/api/response"
 	"github.com/kirananto/review-system/internal/logger"
-	"github.com/kirananto/review-system/pkg/review"
+	"github.com/kirananto/review-system/internal/models"
 	"gorm.io/gorm"
 )
 
 type ProviderService interface {
-	GetProvidersList(queryParams *dto.ProvidersQueryParams) ([]*review.Provider, int, *response.ErrorDetails)
-	GetProviderByID(id uint) (*review.Provider, *response.ErrorDetails)
+	GetProvidersList(queryParams *dto.ProvidersQueryParams) ([]*models.Provider, int, *response.ErrorDetails)
+	GetProviderByID(id uint) (*models.Provider, *response.ErrorDetails)
 }
 
 type providerService struct {
@@ -28,7 +28,7 @@ func NewProviderService(repo repository.ReviewRepository, logger *logger.Logger)
 	}
 }
 
-func (s *providerService) GetProvidersList(queryParams *dto.ProvidersQueryParams) ([]*review.Provider, int, *response.ErrorDetails) {
+func (s *providerService) GetProvidersList(queryParams *dto.ProvidersQueryParams) ([]*models.Provider, int, *response.ErrorDetails) {
 	providers, total, err := s.repo.GetProvidersList(queryParams)
 	if err != nil {
 		return nil, 0, &response.ErrorDetails{
@@ -41,7 +41,7 @@ func (s *providerService) GetProvidersList(queryParams *dto.ProvidersQueryParams
 	return providers, total, nil
 }
 
-func (s *providerService) GetProviderByID(id uint) (*review.Provider, *response.ErrorDetails) {
+func (s *providerService) GetProviderByID(id uint) (*models.Provider, *response.ErrorDetails) {
 	provider, err := s.repo.GetProviderByID(id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {

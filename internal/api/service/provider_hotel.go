@@ -7,11 +7,11 @@ import (
 	"github.com/kirananto/review-system/internal/api/repository"
 	"github.com/kirananto/review-system/internal/api/response"
 	"github.com/kirananto/review-system/internal/logger"
-	"github.com/kirananto/review-system/pkg/review"
+	"github.com/kirananto/review-system/internal/models"
 )
 
 type ProviderHotelService interface {
-	GetProviderHotelsList(queryParam *dto.ProviderHotelsQueryParams) ([]*review.ProviderHotel, int, *response.ErrorDetails)
+	GetProviderHotelsList(queryParam *dto.ProviderHotelsQueryParams) ([]*models.ProviderHotel, int, *response.ErrorDetails)
 }
 
 type providerHotelService struct {
@@ -26,7 +26,7 @@ func NewProviderHotelService(repo repository.ReviewRepository, logger *logger.Lo
 	}
 }
 
-func (s *providerHotelService) GetProviderHotelsList(queryParam *dto.ProviderHotelsQueryParams) ([]*review.ProviderHotel, int, *response.ErrorDetails) {
+func (s *providerHotelService) GetProviderHotelsList(queryParam *dto.ProviderHotelsQueryParams) ([]*models.ProviderHotel, int, *response.ErrorDetails) {
 	providerHotels, total, err := s.repo.GetProviderHotelsList(queryParam)
 	if err != nil {
 		return nil, 0, &response.ErrorDetails{
