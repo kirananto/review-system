@@ -11,6 +11,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/gorilla/mux"
 	"github.com/kirananto/review-system/internal/api/handler"
+	"github.com/kirananto/review-system/internal/api/response"
 	"github.com/kirananto/review-system/internal/api/service/mock"
 	"github.com/kirananto/review-system/internal/logger"
 	"github.com/kirananto/review-system/internal/models"
@@ -34,7 +35,7 @@ func TestReviewHandler_GetReview(t *testing.T) {
 			ReviewDate: time.Now(),
 		}
 
-		mockService.EXPECT().GetReviewByID(gomock.Any(), uint(1)).Return(expectedReview, nil)
+		mockService.EXPECT().GetReviewByID(uint(1)).Return(expectedReview, nil)
 
 		req, err := http.NewRequest("GET", "/reviews/1", nil)
 		assert.NoError(t, err)
@@ -50,14 +51,19 @@ func TestReviewHandler_GetReview(t *testing.T) {
 		// Assert
 		assert.Equal(t, http.StatusOK, rr.Code)
 
+		var resp response.HTTPResponse
+		err = json.Unmarshal(rr.Body.Bytes(), &resp)
+		assert.NoError(t, err)
+
 		var actualReview models.Review
-		err = json.Unmarshal(rr.Body.Bytes(), &actualReview)
+		actualReviewBytes, _ := json.Marshal(resp.Content)
+		err = json.Unmarshal(actualReviewBytes, &actualReview)
 		assert.NoError(t, err)
 
 		// We need to ignore the time difference in the assertion
-		assert.Equal(t, expectedmodels.ID, actualmodels.ID)
-		assert.Equal(t, expectedmodels.Comment, actualmodels.Comment)
-		assert.Equal(t, expectedmodels.Rating, actualmodels.Rating)
+		assert.Equal(t, expectedReview.ID, actualReview.ID)
+		assert.Equal(t, expectedReview.Comment, actualReview.Comment)
+		assert.Equal(t, expectedReview.Rating, actualReview.Rating)
 
 	})
 
@@ -67,7 +73,11 @@ func TestReviewHandler_GetReview(t *testing.T) {
 		log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
 		reviewHandler := handler.NewReviewHandler(mockService, log)
 
-		mockService.EXPECT().GetReviewByID(gomock.Any(), uint(1)).Return(nil, errors.New("not found"))
+		mockService.EXPECT().GetReviewByID(uint(1)).Return(nil, &response.ErrorDetails{
+			Code:    http.StatusNotFound,
+			Message: "Review not found",
+			Error:   errors.New("not found"),
+		})
 
 		req, err := http.NewRequest("GET", "/reviews/1", nil)
 		assert.NoError(t, err)

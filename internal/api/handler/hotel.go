@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -87,4 +88,74 @@ func (h *HotelHandler) GetHotel(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.WriteHTTPResponse(w, http.StatusOK, resp)
+}
+func (h *HotelHandler) CreateHotel(w http.ResponseWriter, r *http.Request) {
+	var hotelDto dto.HotelRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&hotelDto); err != nil {
+		errResp := response.GetErrorHTTPResponseBody(http.StatusBadRequest, "Invalid request body")
+		response.WriteHTTPResponse(w, http.StatusBadRequest, errResp)
+		return
+	}
+
+	hotel, errDetails := h.service.CreateHotel(&hotelDto)
+	if errDetails != nil {
+		errResp := response.GetErrorHTTPResponseBody(errDetails.Code, errDetails.Message)
+		response.WriteHTTPResponse(w, errDetails.Code, errResp)
+		return
+	}
+
+	resp := &response.HTTPResponse{
+		Content: hotel,
+	}
+
+	response.WriteHTTPResponse(w, http.StatusCreated, resp)
+}
+
+func (h *HotelHandler) UpdateHotel(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		errResp := response.GetErrorHTTPResponseBody(http.StatusBadRequest, "Invalid hotel ID")
+		response.WriteHTTPResponse(w, http.StatusBadRequest, errResp)
+		return
+	}
+
+	var hotelDto dto.HotelRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&hotelDto); err != nil {
+		errResp := response.GetErrorHTTPResponseBody(http.StatusBadRequest, "Invalid request body")
+		response.WriteHTTPResponse(w, http.StatusBadRequest, errResp)
+		return
+	}
+
+	hotel, errDetails := h.service.UpdateHotel(uint(id), &hotelDto)
+	if errDetails != nil {
+		errResp := response.GetErrorHTTPResponseBody(errDetails.Code, errDetails.Message)
+		response.WriteHTTPResponse(w, errDetails.Code, errResp)
+		return
+	}
+
+	resp := &response.HTTPResponse{
+		Content: hotel,
+	}
+
+	response.WriteHTTPResponse(w, http.StatusOK, resp)
+}
+
+func (h *HotelHandler) DeleteHotel(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		errResp := response.GetErrorHTTPResponseBody(http.StatusBadRequest, "Invalid hotel ID")
+		response.WriteHTTPResponse(w, http.StatusBadRequest, errResp)
+		return
+	}
+
+	errDetails := h.service.DeleteHotel(uint(id))
+	if errDetails != nil {
+		errResp := response.GetErrorHTTPResponseBody(errDetails.Code, errDetails.Message)
+		response.WriteHTTPResponse(w, errDetails.Code, errResp)
+		return
+	}
+
+	response.WriteHTTPResponse(w, http.StatusNoContent, nil)
 }
