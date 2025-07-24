@@ -1,10 +1,9 @@
-**Review System Microservice**
+# Review System Microservice
 
 A scalable, event-driven microservice for ingesting, processing, and managing hotel review data. Built in Go with a serverless AWS architecture, this service offers a robust foundation for data ingestion pipelines and a full CRUD REST API.
 
----
 
-## Table of Contents
+## 📚 Table of Contents 
 
 1. [Tech Stack](#tech-stack)
 2. [Architecture Overview](#architecture-overview)
@@ -19,9 +18,9 @@ A scalable, event-driven microservice for ingesting, processing, and managing ho
 11. [Contributing](#contributing)
 12. [License](#license)
 
----
 
-## Tech Stack
+
+## 💻 Tech Stack
 
 * **Language:** Go 1.23+
 
@@ -40,14 +39,14 @@ A scalable, event-driven microservice for ingesting, processing, and managing ho
 * **Local Dev:** Docker, Docker Compose, PostgreSQL
 
 
-## Architecture Overview
+## 🏛️ Architecture Overview
 
 This service follows **Clean Architecture** principles, separating core business logic from external dependencies.
 
-Green: Components that are already implemented
-Blue: Componenets that are yet to be implemented
+- **Green**: Components that are already implemented
+- **Blue**: Componenets that are yet to be implemented
 
-Production setup:
+### Production setup:
 ```mermaid
 graph TD
   classDef current fill:#7FC77F,stroke:#333,stroke-width:1px;
@@ -83,7 +82,8 @@ graph TD
   end
 ```
 
-Local Development:
+### Local Development:
+
 ```mermaid
 %% Local Development Architecture
 graph TD
@@ -98,9 +98,8 @@ graph TD
   end
 ```
 
----
 
-## Features
+## ⚡️ Features
 
 * **Event-Driven:** Ingest reviews via S3 → SQS → Lambda pipeline.
 * **Full CRUD API:** Manage providers, hotels, and reviews through REST endpoints.
@@ -112,7 +111,7 @@ graph TD
 * **Local Development:** Dockerized PostgreSQL & easy setup.
 * **Auto-Generated Docs:** Swagger UI for API exploration.
 
----
+
 
 ## Prerequisites
 
@@ -240,7 +239,7 @@ curl http://localhost:8000/api/v1/reviews
 
 ---
 
-## Deployment
+## 🕸️ Deployment
 
 ### 1. Database Stack (One-Time)
 
@@ -267,5 +266,33 @@ sam deploy --guided \
 * **Traffic shifting**: 10% per minute
 * **Rollback**: Triggered on `ApiGateway5XXErrorAlarm`
 
----
 
+
+
+## 🤔 Assumptions
+
+1. **Hotel IDs are not always reliable.**  
+   There's no guarantee that `HotelID` will remain consistent across multiple files. We need to account for potential inconsistencies.  
+   **Current Decision**: For now, we are assuming that `HotelID` is consistent across different providers and files, and treating it as a trustworthy identifier.
+
+2. **Provider ID & Review ID is assumed to be internal.**  
+   We assume that `ProviderID` & `ReviewID` is an internal identifier specific to each provider, and we will proceed based on this assumption.
+
+3. **Ambiguity in Overall Score placement.**  
+   The `overallScore` field conflicts with individual review lines — it's unclear when it should appear (before or after reviews), and the insertion order may affect interpretation.  
+   **Assumption**: We store only the latest overall score, determined by the review entry with the highest count.
+
+4. **One provider per file.**  
+   Each file contains data from a single provider. A provider can upload multiple files over time, but no single file will contain reviews from multiple providers.
+
+5. **No unique identifier for reviewers.**  
+   Due to the absence of a unique reviewer ID, it's not feasible to use a relational model for reviewers. Reviewer details will instead be stored as a field in the `comment` table.
+
+
+## 🐊 Gochas
+
+- Swagger Documentation works only on localhost
+
+## 🚧 TODO - Work in Progress
+
+[Link to TODO.md file](./TODO.md)
