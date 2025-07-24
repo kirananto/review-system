@@ -3,8 +3,9 @@
 
 ## 🔴 Immediate Priorities (Must-have for POC)
 
-- [ ] Large files, notify on success/100/100 inserted, how many failed etc. in logs/slack etc & Store in db, audit log
 - [ ] Cache Upsert Logic for overall data
+- [ ] Move Auto-Migration to CI/CD instead of running on every start
+- [x] Large files, notify on success/100/100 inserted, how many failed etc. in logs/slack etc & Store in db, audit log
 - [x] Support for adding middlewares
 - [x] Document Deployment Strategy - Without delay
 - [x] Explain Key Design Pattern in `README.md`
@@ -14,11 +15,6 @@
 - [x] Add Pagination to CRUD APIs
 - [x] Filtering & Sorting in CRUD APIs
 - [x] Write Unit Tests for core flows (CRUD, error handling, validation)
-
-
-## 🟡 Mid Priority (If time permits - Helpful for UX & Dev Experience)
-
-- [ ] Move Auto-Migration to CI/CD instead of running on every start  
 
 
 ## 🔵 Known Gaps – Not Required for POC, but Must for Production
