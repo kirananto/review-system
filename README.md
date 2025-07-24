@@ -230,7 +230,7 @@ curl http://localhost:8000/api/v1/reviews
 * **Unit Tests**
 
   ```bash
-  go test ./...
+   go test -v -cover -coverprofile=coverage.out ./...
   ```
 * **Integration Tests**
 
