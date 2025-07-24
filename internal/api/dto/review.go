@@ -15,3 +15,10 @@ type ReviewResponse struct {
 	Comment   string    `json:"comment"`
 	CreatedAt time.Time `json:"created_at"`
 }
+
+type ReviewQueryParams struct {
+	Limit      int  `schema:"limit"`
+	Offset     int  `schema:"offset"`
+	HotelID    uint `schema:"hotel_id"`
+	ProviderID uint `schema:"provider_id"`
+}

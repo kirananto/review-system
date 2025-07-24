@@ -15,19 +15,19 @@ type ReviewRepository interface {
 	CreateProvider(provider *reviewmodel.Provider) error
 
 	// Hotel methods
-	GetHotelsList(queryParam *dto.HotelsQueryParams) ([]*reviewmodel.Hotel, int, error)
+	GetHotelsList(queryParams *dto.HotelsQueryParams) ([]*reviewmodel.Hotel, int, error)
 	GetHotelByID(id uint) (*reviewmodel.Hotel, error)
 	GetHotelByName(name string) (*reviewmodel.Hotel, error)
 	CreateHotel(hotel *reviewmodel.Hotel) error
 
 	// ProviderHotel methods
-	GetProviderHotelsList(queryParam *dto.ProviderHotelsQueryParams) ([]*reviewmodel.ProviderHotel, int, error)
+	GetProviderHotelsList(queryParams *dto.ProviderHotelsQueryParams) ([]*reviewmodel.ProviderHotel, int, error)
 	GetProviderHotel(providerID uint, providerHotelID string) (*reviewmodel.ProviderHotel, error)
 	CreateProviderHotel(providerHotel *reviewmodel.ProviderHotel) error
 	UpdateProviderHotel(providerHotel *reviewmodel.ProviderHotel) error
 
 	// Review methods
-	GetReviews() ([]*reviewmodel.Review, error)
+	GetReviewsList(queryParams *dto.ReviewQueryParams) ([]*reviewmodel.Review, int, error)
 	GetReviewByID(id uint) (*reviewmodel.Review, error)
 	GetReview(providerID uint, providerReviewID string) (*reviewmodel.Review, error)
 	CreateReview(review *reviewmodel.Review) error
