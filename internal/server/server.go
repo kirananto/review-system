@@ -69,7 +69,8 @@ func NewServer(cfg *ServerConfig) (*Server, error) {
 	log := logger.NewLogger(&cfg.LogConfig)
 
 	dataSource := db.NewDataSource(cfg.DatabaseDSN)
-
+	// TODO: Remove this
+	dataSource.Db.Migrator().DropTable(&models.ProviderHotel{}, &models.Review{}, &models.Hotel{}, &models.Provider{}, &models.AuditLog{})
 	dataSource.Db.AutoMigrate(&models.Provider{}, &models.Hotel{}, &models.Review{}, &models.ProviderHotel{})
 
 	router := api.SetUpRoutes(dataSource, log)
@@ -165,7 +166,7 @@ func (s *Server) handleSQSEvent(ctx context.Context, sqsEvent events.SQSEvent) (
 			repository := repository.NewReviewRepository(s.DataSource)
 			reviewService := service.NewReviewService(repository, log)
 
-			if err := reviewService.ProcessReviews(ctx, reader); err != nil {
+			if err := reviewService.ProcessReviews(ctx, reader, key); err != nil {
 				log.Error(err, fmt.Sprintf("Error processing reviews from S3 object %s/%s: %v", bucket, key, err))
 				continue
 			}

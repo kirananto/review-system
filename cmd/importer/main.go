@@ -29,7 +29,7 @@ func main() {
 
 	dataSource := db.NewDataSource(cfg.Database.DSN)
 
-	dataSource.Db.AutoMigrate(&models.Provider{}, &models.Hotel{}, &models.Review{}, &models.ProviderHotel{})
+	dataSource.Db.AutoMigrate(&models.Provider{}, &models.Hotel{}, &models.Review{}, &models.ProviderHotel{}, &models.AuditLog{})
 
 	log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
 	repository := repository.NewReviewRepository(dataSource)
@@ -47,7 +47,7 @@ func main() {
 	}
 	defer file.Close()
 
-	if err := service.ProcessReviews(context.Background(), file); err != nil {
+	if err := service.ProcessReviews(context.Background(), file, filePath); err != nil {
 		log.Error(err, fmt.Sprintf("Failed to process reviews: %v", err))
 	}
 

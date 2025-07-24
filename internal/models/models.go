@@ -39,7 +39,7 @@ type ProviderHotel struct {
 
 // Review represents a single review from a provider.
 type Review struct {
-	ID           uint            `json:"id" gorm:"primaryKey;autoIncrement"`
+	ID           uint            `json:"id" gorm:"primaryKey;autoIncrement:false"`
 	ProviderID   uint            `json:"provider_id" gorm:"not null"`
 	HotelID      uint            `json:"hotel_id" gorm:"not null"`
 	Rating       float64         `json:"rating" gorm:"not null"`
@@ -52,4 +52,14 @@ type Review struct {
 
 	Provider Provider `json:"-" gorm:"constraint:OnDelete:CASCADE;foreignKey:ProviderID;references:ID"`
 	Hotel    Hotel    `json:"-" gorm:"constraint:OnDelete:CASCADE;foreignKey:HotelID;references:ID"`
+}
+
+// AuditLog represents the audit log for a processed file.
+type AuditLog struct {
+	ID           uint      `json:"id" gorm:"primaryKey"`
+	FileName     string    `json:"file_name" gorm:"not null"`
+	SuccessCount int       `json:"success_count" gorm:"default:0"`
+	FailureCount int       `json:"failure_count" gorm:"default:0"`
+	TotalCount   int       `json:"total_count" gorm:"default:0"`
+	CreatedAt    time.Time `json:"created_at" gorm:"autoCreateTime"`
 }

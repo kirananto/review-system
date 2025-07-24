@@ -5,6 +5,7 @@ import (
 	"github.com/kirananto/review-system/internal/db"
 	models "github.com/kirananto/review-system/internal/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type ReviewRepository interface {
@@ -32,6 +33,10 @@ type ReviewRepository interface {
 	GetReviewsList(queryParams *dto.ReviewQueryParams) ([]*models.Review, int, error)
 	GetReviewByID(id uint) (*models.Review, error)
 	CreateReview(review *models.Review) error
+	UpsertReview(review *models.Review) error
+
+	// AuditLog methods
+	CreateAuditLog(auditLog *models.AuditLog) error
 }
 
 type reviewRepository struct {
@@ -42,4 +47,16 @@ func NewReviewRepository(dataSource *db.DataSource) ReviewRepository {
 	return &reviewRepository{
 		db: dataSource.Db,
 	}
+}
+
+func (r *reviewRepository) CreateAuditLog(auditLog *models.AuditLog) error {
+	return r.db.Create(auditLog).Error
+}
+
+func (r *reviewRepository) UpsertReview(review *models.Review) error {
+	// Use Clauses to handle the conflict
+	return r.db.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "id"}},
+		DoUpdates: clause.AssignmentColumns([]string{"rating", "comment", "review_date"}),
+	}).Create(review).Error
 }

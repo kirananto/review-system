@@ -70,15 +70,15 @@ func (mr *MockReviewServiceMockRecorder) GetReviewsList(queryParam interface{}) 
 }
 
 // ProcessReviews mocks base method.
-func (m *MockReviewService) ProcessReviews(ctx context.Context, reader io.Reader) error {
+func (m *MockReviewService) ProcessReviews(ctx context.Context, reader io.Reader, fileName string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ProcessReviews", ctx, reader)
+	ret := m.ctrl.Call(m, "ProcessReviews", ctx, reader, fileName)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ProcessReviews indicates an expected call of ProcessReviews.
-func (mr *MockReviewServiceMockRecorder) ProcessReviews(ctx, reader interface{}) *gomock.Call {
+func (mr *MockReviewServiceMockRecorder) ProcessReviews(ctx, reader, fileName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessReviews", reflect.TypeOf((*MockReviewService)(nil).ProcessReviews), ctx, reader)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProcessReviews", reflect.TypeOf((*MockReviewService)(nil).ProcessReviews), ctx, reader, fileName)
 }
