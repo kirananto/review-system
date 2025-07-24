@@ -70,7 +70,7 @@ func NewServer(cfg *ServerConfig) (*Server, error) {
 
 	dataSource := db.NewDataSource(cfg.DatabaseDSN)
 
-	dataSource.Db.AutoMigrate(&models.Provider{}, &models.Hotel{}, &models.Review{}, &models.ProviderHotel{})
+	dataSource.Db.AutoMigrate(&models.Provider{}, &models.Hotel{}, &models.Review{}, &models.ProviderHotel{}, &models.AuditLog{})
 
 	router := api.SetUpRoutes(dataSource, log)
 
