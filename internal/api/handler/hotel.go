@@ -28,6 +28,15 @@ func NewHotelHandler(service service.HotelService, logger *logger.Logger) *Hotel
 	}
 }
 
+// GetHotelsList godoc
+// @Summary Get a list of hotels
+// @Description Get a list of hotels with optional filters
+// @Produce json
+// @Param name query string false "Hotel name"
+// @Param limit query int false "Limit"
+// @Param offset query int false "Offset"
+// @Success 200 {object} response.HTTPResponse{content=response.HTTPResponseContent{results=[]models.Hotel}}
+// @Router /hotels [get]
 func (h *HotelHandler) GetHotelsList(w http.ResponseWriter, r *http.Request) {
 	// Initialize with default values
 	queryParams := &dto.HotelsQueryParams{
@@ -66,6 +75,13 @@ func (h *HotelHandler) GetHotelsList(w http.ResponseWriter, r *http.Request) {
 	response.WriteHTTPResponse(w, http.StatusOK, resp)
 }
 
+// GetHotel godoc
+// @Summary Get a hotel by ID
+// @Description Get a hotel by ID
+// @Produce json
+// @Param id path int true "Hotel ID"
+// @Success 200 {object} response.HTTPResponse{content=models.Hotel}
+// @Router /hotels/{id} [get]
 func (h *HotelHandler) GetHotel(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -93,7 +109,6 @@ func (h *HotelHandler) GetHotel(w http.ResponseWriter, r *http.Request) {
 // CreateHotel godoc
 // @Summary Create a new hotel
 // @Description Create a new hotel
-// @Tags hotels
 // @Accept json
 // @Produce json
 // @Param hotel body dto.HotelRequestBody true "Hotel object"
@@ -124,7 +139,6 @@ func (h *HotelHandler) CreateHotel(w http.ResponseWriter, r *http.Request) {
 // UpdateHotel godoc
 // @Summary Update a hotel
 // @Description Update a hotel
-// @Tags hotels
 // @Accept json
 // @Produce json
 // @Param id path int true "Hotel ID"
@@ -164,7 +178,6 @@ func (h *HotelHandler) UpdateHotel(w http.ResponseWriter, r *http.Request) {
 // DeleteHotel godoc
 // @Summary Delete a hotel
 // @Description Delete a hotel
-// @Tags hotels
 // @Produce json
 // @Param id path int true "Hotel ID"
 // @Success 204
