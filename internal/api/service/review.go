@@ -20,7 +20,7 @@ import (
 type ReviewService interface {
 	GetReviewsList(queryParam *dto.ReviewQueryParams) ([]*models.Review, int, *response.ErrorDetails)
 	GetReviewByID(id uint) (*models.Review, *response.ErrorDetails)
-	ProcessReviews(ctx context.Context, reader io.Reader) error
+	ProcessReviews(ctx context.Context, reader io.Reader, fileName string) error
 }
 
 type reviewService struct {
@@ -96,32 +96,53 @@ type ReviewData struct {
 	} `json:"overallByProviders"`
 }
 
-func (s *reviewService) ProcessReviews(ctx context.Context, reader io.Reader) error {
+func (s *reviewService) ProcessReviews(ctx context.Context, reader io.Reader, fileName string) error {
 	scanner := bufio.NewScanner(reader)
 	log := s.logger
+	var successCount, failureCount, totalCount int
+
 	for scanner.Scan() {
+		totalCount++
 		var data ReviewData
 		line := scanner.Bytes()
 
 		if err := json.Unmarshal(line, &data); err != nil {
 			log.Error(err, fmt.Sprintf("Failed to parse JSON line: %v. Line: %s", err, string(line)))
+			failureCount++
 			continue
 		}
 
 		if err := s.validateData(&data); err != nil {
 			log.Error(err, fmt.Sprintf("Invalid data: %v. Data: %+v", err, data))
+			failureCount++
 			continue
 		}
 
 		if err := s.processRecord(ctx, &data); err != nil {
 			log.Error(err, fmt.Sprintf("Failed to process record: %v. Data: %+v", err, data))
+			failureCount++
 			continue
 		}
+		successCount++
 	}
 
 	if err := scanner.Err(); err != nil {
 		return fmt.Errorf("error reading input: %w", err)
 	}
+
+	auditLog := &models.AuditLog{
+		FileName:     fileName,
+		SuccessCount: successCount,
+		FailureCount: failureCount,
+		TotalCount:   totalCount,
+	}
+
+	if err := s.repo.CreateAuditLog(auditLog); err != nil {
+		log.Error(err, "Failed to create audit log")
+		// Do not return error, as the main process was successful
+	}
+
+	log.Info(fmt.Sprintf("Processed file: %s, Success: %d, Failed: %d, Total: %d", fileName, successCount, failureCount, totalCount))
 
 	return nil
 }
@@ -191,6 +212,7 @@ func (s *reviewService) processRecord(ctx context.Context, data *ReviewData) err
 	review := &models.Review{
 		ProviderID:   provider.ID,
 		HotelID:      hotel.ID,
+		ID:           uint(data.Comment.HotelReviewID),
 		Rating:       data.Comment.Rating,
 		Comment:      data.Comment.ReviewComments,
 		Lang:         "en",
@@ -198,8 +220,8 @@ func (s *reviewService) processRecord(ctx context.Context, data *ReviewData) err
 		ReviewerInfo: []byte(`{}`), // Empty JSON object since we don't have reviewer info
 	}
 
-	if err := s.repo.CreateReview(review); err != nil {
-		return fmt.Errorf("failed to create review: %w", err)
+	if err := s.repo.UpsertReview(review); err != nil {
+		return fmt.Errorf("failed to create or update review: %w", err)
 	}
 
 	return nil
