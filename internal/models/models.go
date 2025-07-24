@@ -7,7 +7,7 @@ import (
 
 // Provider represents a review provider (e.g., Agoda, Booking.com).
 type Provider struct {
-	ID        uint      `json:"id" gorm:"primaryKey;autoIncrement"`
+	ID        uint      `json:"id" gorm:"primaryKey"`
 	Name      string    `json:"name" gorm:"unique;not null"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
@@ -15,7 +15,7 @@ type Provider struct {
 
 // Hotel represents a hotel entity.
 type Hotel struct {
-	ID        uint      `json:"id" gorm:"primaryKey;autoIncrement"`
+	ID        uint      `json:"id" gorm:"primaryKey"`
 	HotelName string    `json:"name" gorm:"not null"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`

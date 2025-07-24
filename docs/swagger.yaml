@@ -110,6 +110,41 @@ paths:
             type: object
       summary: Health check endpoint
   /hotels:
+    get:
+      description: Get a list of hotels with optional filters
+      parameters:
+      - description: Hotel name
+        in: query
+        name: name
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.HTTPResponse'
+            - properties:
+                content:
+                  allOf:
+                  - $ref: '#/definitions/response.HTTPResponseContent'
+                  - properties:
+                      results:
+                        items:
+                          $ref: '#/definitions/models.Hotel'
+                        type: array
+                    type: object
+              type: object
+      summary: Get a list of hotels
     post:
       consumes:
       - application/json
@@ -134,8 +169,6 @@ paths:
                   $ref: '#/definitions/models.Hotel'
               type: object
       summary: Create a new hotel
-      tags:
-      - hotels
   /hotels/{id}:
     delete:
       description: Delete a hotel
@@ -151,8 +184,27 @@ paths:
         "204":
           description: No Content
       summary: Delete a hotel
-      tags:
-      - hotels
+    get:
+      description: Get a hotel by ID
+      parameters:
+      - description: Hotel ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.HTTPResponse'
+            - properties:
+                content:
+                  $ref: '#/definitions/models.Hotel'
+              type: object
+      summary: Get a hotel by ID
     put:
       consumes:
       - application/json
@@ -182,8 +234,6 @@ paths:
                   $ref: '#/definitions/models.Hotel'
               type: object
       summary: Update a hotel
-      tags:
-      - hotels
   /provider-hotels:
     get:
       description: Get a list of provider hotels with optional filters
@@ -224,8 +274,6 @@ paths:
                     type: object
               type: object
       summary: Get a list of provider hotels
-      tags:
-      - provider-hotels
   /providers:
     get:
       description: Get a list of providers with optional filters

@@ -37,6 +37,68 @@ const docTemplate = `{
             }
         },
         "/hotels": {
+            "get": {
+                "description": "Get a list of hotels with optional filters",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get a list of hotels",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Hotel name",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.HTTPResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.HTTPResponseContent"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "results": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.Hotel"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create a new hotel",
                 "consumes": [
@@ -44,9 +106,6 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
-                ],
-                "tags": [
-                    "hotels"
                 ],
                 "summary": "Create a new hotel",
                 "parameters": [
@@ -83,6 +142,42 @@ const docTemplate = `{
             }
         },
         "/hotels/{id}": {
+            "get": {
+                "description": "Get a hotel by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get a hotel by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Hotel ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.HTTPResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "$ref": "#/definitions/models.Hotel"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "Update a hotel",
                 "consumes": [
@@ -90,9 +185,6 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
-                ],
-                "tags": [
-                    "hotels"
                 ],
                 "summary": "Update a hotel",
                 "parameters": [
@@ -139,9 +231,6 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
-                "tags": [
-                    "hotels"
-                ],
                 "summary": "Delete a hotel",
                 "parameters": [
                     {
@@ -164,9 +253,6 @@ const docTemplate = `{
                 "description": "Get a list of provider hotels with optional filters",
                 "produces": [
                     "application/json"
-                ],
-                "tags": [
-                    "provider-hotels"
                 ],
                 "summary": "Get a list of provider hotels",
                 "parameters": [
