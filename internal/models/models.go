@@ -24,8 +24,8 @@ type Hotel struct {
 // ProviderHotel maps a provider's hotel ID to our internal hotel ID.
 // It also stores provider-specific overall stats for the hotel.
 type ProviderHotel struct {
-	HotelID      uint            `json:"hotel_id" gorm:"primaryKey;autoIncrement:false"`
-	ProviderID   uint            `json:"provider_id" gorm:"primaryKey;autoIncrement:false"`
+	HotelID      uint            `json:"hotel_id" gorm:"primaryKey;autoIncrement:false;index:idx_provider_hotel,unique"`
+	ProviderID   uint            `json:"provider_id" gorm:"primaryKey;autoIncrement:false;index:idx_provider_hotel,unique"`
 	OverallScore float64         `json:"overall_score" gorm:"default:0"`
 	ReviewCount  int             `json:"review_count" gorm:"default:0"`
 	Grades       json.RawMessage `json:"grades" gorm:"type:jsonb" swaggertype:"string"` // jsonb for Postgres
