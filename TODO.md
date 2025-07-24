@@ -20,14 +20,14 @@
 
 These are best practices or production concerns that are out of scope for now:
 
-- [ ] Hardcoded VPC configuration in CloudFormation templates  
+- [ ] Hardcoded VPC configuration in CloudFormation templates
+- [ ] Add redrive policy from the DLQ (Dead letter queue) 
 - [ ] Move Auto-Migration to CI/CD instead of running on every start
 - [ ] Missing S3 Bucket Encryption 
 - [ ] Authentication Mechanism | Move to actual one (Most of the time we use a Third Party Service)
 - [ ] Use Production-grade IAM Policies for Lambda  
 - [ ] Restrict CORS to known domains only  
 - [ ] Add Rate Limiting to API Gateway or via middleware  
-- [ ] Use Structured Logging (e.g., `zap`, `logrus`)  
 - [ ] Set up CloudWatch Alarms  
 - [ ] Tweak Database Indexes based on access patterns (Currently few indexes are already added) 
 - [ ] Tune Lambda Concurrency settings  
