@@ -29,6 +29,7 @@ func main() {
 
 	dataSource := db.NewDataSource(cfg.Database.DSN)
 
+	//TODO: Move Auto-Migration to CI/CD instead of running on every start
 	dataSource.Db.AutoMigrate(&models.Provider{}, &models.Hotel{}, &models.Review{}, &models.ProviderHotel{}, &models.AuditLog{})
 
 	log := logger.NewLogger(&logger.LogConfig{LogLevel: "info"})
