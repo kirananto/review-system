@@ -71,7 +71,7 @@ Resources:
     Properties:
       PackageType: Image
       MemorySize: 128
-      Timeout: 1000
+      Timeout: 900
       Architectures:
         - x86_64
       Environment:
