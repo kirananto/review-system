@@ -20,7 +20,6 @@
 
 - [ ] Move Auto-Migration to CI/CD instead of running on every start  
 
----
 
 ## 🔵 Known Gaps – Not Required for POC, but Must for Production
 
@@ -38,7 +37,6 @@ These are best practices or production concerns that are out of scope for now:
 - [ ] Tune Lambda Concurrency settings  
 - [ ] Tune RDS or DB Configurations for optimal use case
 
----
 
 ## 🟢 Nice to Have (Future Enhancements)
 
