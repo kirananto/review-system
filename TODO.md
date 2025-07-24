@@ -4,7 +4,6 @@
 ## 🔴 Immediate Priorities (Must-have for POC)
 
 - [ ] Cache Upsert Logic for overall data
-- [ ] Move Auto-Migration to CI/CD instead of running on every start
 - [x] Large files, notify on success/100/100 inserted, how many failed etc. in logs/slack etc & Store in db, audit log
 - [x] Support for adding middlewares
 - [x] Document Deployment Strategy - Without delay
@@ -22,6 +21,7 @@
 These are best practices or production concerns that are out of scope for now:
 
 - [ ] Hardcoded VPC configuration in CloudFormation templates  
+- [ ] Move Auto-Migration to CI/CD instead of running on every start
 - [ ] Missing S3 Bucket Encryption 
 - [ ] Authentication Mechanism | Move to actual one (Most of the time we use a Third Party Service)
 - [ ] Use Production-grade IAM Policies for Lambda  
