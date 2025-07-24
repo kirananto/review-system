@@ -5,13 +5,27 @@ import (
 	reviewmodel "github.com/kirananto/review-system/pkg/review"
 )
 
-// GetProviderHotels retrieves all provider hotels.
+// GetProviderHotelsList retrieves all provider hotels.
 func (r *reviewRepository) GetProviderHotelsList(queryParams *dto.ProviderHotelsQueryParams) ([]*reviewmodel.ProviderHotel, int, error) {
 	var providerHotels []*reviewmodel.ProviderHotel
 	var totalCount int64
 
 	// Initialize query
 	dbQuery := r.db.Model(&reviewmodel.ProviderHotel{})
+
+	// Build conditions map with only non-zero values
+	conditions := make(map[string]interface{})
+	if queryParams.HotelID != 0 {
+		conditions["hotel_id"] = queryParams.HotelID
+	}
+	if queryParams.ProviderID != 0 {
+		conditions["provider_id"] = queryParams.ProviderID
+	}
+
+	// Apply non-zero conditions (GORM will AND them together)
+	if len(conditions) > 0 {
+		dbQuery = dbQuery.Where(conditions)
+	}
 
 	// Get paginated results
 	if err := dbQuery.

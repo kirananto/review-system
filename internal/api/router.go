@@ -64,10 +64,6 @@ func SetUpRoutes(dataSource *db.DataSource, log *logger.Logger) *mux.Router {
 
 	// ProviderHotel routes
 	api.HandleFunc("/provider-hotels", providerHotelHandler.GetProviderHotelsList).Methods("GET")
-	api.HandleFunc("/provider-hotels/{id:[0-9]+}", providerHotelHandler.GetProviderHotel).Methods("GET")
-	api.HandleFunc("/provider-hotels", providerHotelHandler.CreateProviderHotel).Methods("POST")
-	api.HandleFunc("/provider-hotels/{id:[0-9]+}", providerHotelHandler.UpdateProviderHotel).Methods("PUT")
-	api.HandleFunc("/provider-hotels/{id:[0-9]+}", providerHotelHandler.DeleteProviderHotel).Methods("DELETE")
 
 	// Review routes
 	api.HandleFunc("/reviews", reviewHandler.GetReviews).Methods("GET")
