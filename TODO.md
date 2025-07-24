@@ -4,8 +4,8 @@
 ## 🔴 Immediate Priorities (Must-have for POC)
 
 - [ ] Support for adding middlewares
-- [ ] Document Deployment Strategy - Without delay
 - [ ] Large files, notify on success/100/100 inserted, how many failed etc. in logs/slack etc & Store in db, audit log
+- [x] Document Deployment Strategy - Without delay
 - [x] Explain Key Design Pattern in `README.md`
 - [x] Consistent Error Handling across all endpoints
 - [x] Verify working of CLI (go run cmd/importer/main.go test/data/reviews.jl)

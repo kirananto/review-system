@@ -104,6 +104,12 @@ Resources:
             Path: /{proxy+}
             Method: ANY
             RestApiId: !Ref ApiGateway
+      # Commenting it out for now, as i don't want bluegreen deployment in early stages
+      # DeploymentPreference:
+      #   Type: Linear10PercentEvery1Minute
+      #   Alarms:
+      #     - Name: !Ref ApiGateway5XXErrorAlarm
+      # AutoPublishAlias: live
     Metadata:
       DockerTag: go-review-importer-v1-amd64
       DockerContext: ../../
@@ -117,6 +123,25 @@ Resources:
         AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
         AllowHeaders: "'Content-Type,Authorization'"
         AllowOrigin: "'*'"
+
+  # ApiGateway5XXErrorAlarm:
+  #   Type: AWS::CloudWatch::Alarm
+  #   Properties:
+  #     AlarmName: !Sub "${AWS::StackName}-ApiGateway5XXErrorAlarm"
+  #     AlarmDescription: "Alarm for 5XX errors on API Gateway"
+  #     Namespace: "AWS/ApiGateway"
+  #     MetricName: "5XXError"
+  #     Dimensions:
+  #       - Name: "ApiName"
+  #         Value: !Ref ApiGateway
+  #       - Name: "Stage"
+  #         Value: "Prod"
+  #     Statistic: "Sum"
+  #     Period: 60
+  #     EvaluationPeriods: 1
+  #     Threshold: 1
+  #     ComparisonOperator: "GreaterThanOrEqualToThreshold"
+  #     TreatMissingData: "notBreaching"
         
 Outputs:
   ReviewImporterFunction:
