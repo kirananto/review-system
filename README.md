@@ -304,7 +304,7 @@ A redrive policy has not been configured yet, but can be easily added based on t
    Due to the absence of a unique reviewer ID, it's not feasible to use a relational model for reviewers. Reviewer details will instead be stored as a field in the `comment` table.
 
 6. **Idempotency gotcha**
-   The current design ensures idempotency by processing only newly added files from the S3 bucket. While checksum-based duplication checks were considered to prevent reprocessing if the same file is re-uploaded, they were intentionally avoided to reduce complexity and prevent ambiguity—especially during redrive scenarios in case of failures. This trade-off helps keep the system simpler, more predictable, and easier to reason about operationally.
+   The current design ensures idempotency by processing only newly added files from the S3 bucket. While checksum-based duplication checks were considered to prevent reprocessing if the same file is re-uploaded, they were intentionally avoided to reduce complexity and prevent ambiguity—especially during redrive scenarios in case of failures. This needs to be properly designed taking into consideration the re-drive policies and other failure mechanisms.
 
 
 
