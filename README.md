@@ -79,7 +79,7 @@ This guide explains how to set up and run the application locally.
 - **Run the API Server**:
   -   Ensure `RUN_MODE=local` is in your `.env` file.
   -   Run the command: `go run cmd/server/main.go`
-  -   The API is available at `http://localhost:8080`.
+  -   The API is available at `http://localhost:8000`.
 
 - **Test the Data Processing Pipeline (SQS/S3)**:
   Use the AWS SAM CLI to invoke the function locally with a sample S3 event.
@@ -98,7 +98,7 @@ This guide explains how to set up and run the application locally.
   go run -mod=mod github.com/swaggo/swag/cmd/swag init --generalInfo cmd/server/main.go
   ```
 - **View the documentation**:
-  With the local server running, go to `http://localhost:8080/swagger/index.html`.
+  With the local server running, go to `http://localhost:8000/swagger/index.html`.
 
 ## Deployment Strategy
 

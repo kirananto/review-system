@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "localhost:8000",
     "basePath": "/api/v1",
     "paths": {
         "/health": {
@@ -30,291 +30,67 @@
                 }
             }
         },
-        "/hotels": {
-            "get": {
-                "description": "Get all hotels",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Get all hotels",
-                "operationId": "get-hotels",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/review.Hotel"
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create a new hotel",
-                "consumes": [
-                    "application/json"
-                ],
-                "summary": "Create a new hotel",
-                "operationId": "create-hotel",
-                "parameters": [
-                    {
-                        "description": "Hotel object",
-                        "name": "hotel",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/review.Hotel"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created"
-                    }
-                }
-            }
-        },
-        "/hotels/{id}": {
-            "get": {
-                "description": "Get a hotel by ID",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Get a hotel by ID",
-                "operationId": "get-hotel-by-id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Hotel ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/review.Hotel"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Update an existing hotel",
-                "consumes": [
-                    "application/json"
-                ],
-                "summary": "Update an existing hotel",
-                "operationId": "update-hotel",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Hotel ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Hotel object",
-                        "name": "hotel",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/review.Hotel"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a hotel",
-                "summary": "Delete a hotel",
-                "operationId": "delete-hotel",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Hotel ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
-        "/provider-hotels": {
-            "get": {
-                "description": "Get all provider hotels",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Get all provider hotels",
-                "operationId": "get-provider-hotels",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/review.ProviderHotel"
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create a new provider hotel",
-                "consumes": [
-                    "application/json"
-                ],
-                "summary": "Create a new provider hotel",
-                "operationId": "create-provider-hotel",
-                "parameters": [
-                    {
-                        "description": "Provider Hotel object",
-                        "name": "providerHotel",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/review.ProviderHotel"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created"
-                    }
-                }
-            }
-        },
-        "/provider-hotels/{id}": {
-            "get": {
-                "description": "Get a provider hotel by ID",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Get a provider hotel by ID",
-                "operationId": "get-provider-hotel-by-id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Provider Hotel ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/review.ProviderHotel"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Update an existing provider hotel",
-                "consumes": [
-                    "application/json"
-                ],
-                "summary": "Update an existing provider hotel",
-                "operationId": "update-provider-hotel",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Provider Hotel ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Provider Hotel object",
-                        "name": "providerHotel",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/review.ProviderHotel"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a provider hotel",
-                "summary": "Delete a provider hotel",
-                "operationId": "delete-provider-hotel",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Provider Hotel ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
         "/providers": {
             "get": {
-                "description": "Get all providers",
+                "description": "Get a list of providers with optional filters",
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get all providers",
-                "operationId": "get-providers",
+                "summary": "Get a list of providers",
+                "operationId": "get-providers-list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Provider name",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/review.Provider"
-                            }
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.HTTPResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.HTTPResponseContent"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "results": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/review.Provider"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
                         }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create a new provider",
-                "consumes": [
-                    "application/json"
-                ],
-                "summary": "Create a new provider",
-                "operationId": "create-provider",
-                "parameters": [
-                    {
-                        "description": "Provider object",
-                        "name": "provider",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/review.Provider"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created"
                     }
                 }
             }
@@ -344,110 +120,80 @@
                         }
                     }
                 }
-            },
-            "put": {
-                "description": "Update an existing provider",
-                "consumes": [
-                    "application/json"
-                ],
-                "summary": "Update an existing provider",
-                "operationId": "update-provider",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Provider ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Provider object",
-                        "name": "provider",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/review.Provider"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a provider",
-                "summary": "Delete a provider",
-                "operationId": "delete-provider",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Provider ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
             }
         },
         "/reviews": {
             "get": {
-                "description": "Get all reviews",
+                "description": "Get a list of reviews with optional filters",
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get all reviews",
-                "operationId": "get-reviews",
+                "summary": "Get a list of reviews",
+                "operationId": "get-reviews-list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Hotel ID",
+                        "name": "hotel_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/review.Review"
-                            }
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.HTTPResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.HTTPResponseContent"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "results": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/review.Review"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
                         }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create a new review",
-                "consumes": [
-                    "application/json"
-                ],
-                "summary": "Create a new review",
-                "operationId": "create-review",
-                "parameters": [
-                    {
-                        "description": "Review object",
-                        "name": "review",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/review.Review"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created"
                     }
                 }
             }
         },
         "/reviews/{id}": {
             "get": {
-                "description": "Get a review by ID",
+                "description": "Get a Review by ID",
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Get a review by ID",
+                "summary": "Get a Review by ID",
                 "operationId": "get-review-by-id",
                 "parameters": [
                     {
@@ -466,75 +212,35 @@
                         }
                     }
                 }
-            },
-            "put": {
-                "description": "Update an existing review",
-                "consumes": [
-                    "application/json"
-                ],
-                "summary": "Update an existing review",
-                "operationId": "update-review",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Review ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Review object",
-                        "name": "review",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/review.Review"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a review",
-                "summary": "Delete a review",
-                "operationId": "delete-review",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Review ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
             }
         }
     },
     "definitions": {
-        "review.Hotel": {
+        "response.HTTPResponse": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
+                "code": {
                     "type": "integer"
                 },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
+                "content": {},
+                "message": {
                     "type": "string"
                 }
+            }
+        },
+        "response.HTTPResponseContent": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "next": {
+                    "type": "string"
+                },
+                "prev": {
+                    "type": "string"
+                },
+                "results": {}
             }
         },
         "review.Provider": {
@@ -549,40 +255,6 @@
                 "name": {
                     "description": "e.g., \"Agoda\"",
                     "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "review.ProviderHotel": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "grades": {
-                    "description": "JSON-encoded grades",
-                    "type": "string"
-                },
-                "hotel_id": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "overall_score": {
-                    "type": "number"
-                },
-                "provider_hotel_id": {
-                    "description": "Provider's hotelId (e.g., \"10984\")",
-                    "type": "string"
-                },
-                "provider_id": {
-                    "type": "integer"
-                },
-                "review_count": {
-                    "type": "integer"
                 },
                 "updated_at": {
                     "type": "string"
@@ -605,13 +277,14 @@
                     "type": "string"
                 },
                 "provider_hotel_id": {
+                    "description": "TODO: shouldnt this be hotelID ?",
                     "type": "integer"
                 },
                 "provider_id": {
                     "type": "integer"
                 },
                 "provider_review_id": {
-                    "description": "From comment.hotelReviewId",
+                    "description": "TODO: isnt this same as ID?",
                     "type": "string"
                 },
                 "rating": {

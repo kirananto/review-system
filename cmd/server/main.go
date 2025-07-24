@@ -14,7 +14,7 @@ import (
 // @title Review System API
 // @version 1.0
 // @description This is a sample server for a review system.
-// @host localhost:8080
+// @host localhost:8000
 // @BasePath /api/v1
 func main() {
 	// Load .env file
