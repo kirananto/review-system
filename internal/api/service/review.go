@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/kirananto/review-system/internal/api/dto"
@@ -182,16 +183,38 @@ func (s *reviewService) validateData(data *ReviewData) error {
 
 func (s *reviewService) processRecord(ctx context.Context, data *ReviewData) error {
 	log := s.logger
-	// Get or create provider
-	provider, err := s.getOrCreateProvider(data.Comment.ReviewProviderText)
-	if err != nil {
-		return err
-	}
+	var wg sync.WaitGroup
+	errChan := make(chan error, 2)
 
-	// Get or create hotel
-	hotel, err := s.getOrCreateHotel(data.HotelName)
-	if err != nil {
-		return err
+	var provider *models.Provider
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		var err error
+		provider, err = s.getOrCreateProvider(data.Comment.ReviewProviderText)
+		if err != nil {
+			errChan <- err
+		}
+	}()
+
+	var hotel *models.Hotel
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		var err error
+		hotel, err = s.getOrCreateHotel(data.HotelName)
+		if err != nil {
+			errChan <- err
+		}
+	}()
+
+	wg.Wait()
+	close(errChan)
+
+	for err := range errChan {
+		if err != nil {
+			return err
+		}
 	}
 
 	// Find the correct provider data from the OverallByProviders array
