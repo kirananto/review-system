@@ -47,7 +47,7 @@ func (r *reviewRepository) GetProviderByID(id uint) (*models.Provider, error) {
 // GetProviderByName retrieves a provider by its name.
 func (r *reviewRepository) GetProviderByName(name string) (*models.Provider, error) {
 	var provider models.Provider
-	if err := r.db.Where("name = ?", name).First(&provider).Error; err != nil {
+	if err := r.db.Model(&models.Provider{}).Select("id").Where("name = ?", name).First(&provider).Error; err != nil {
 		return nil, err
 	}
 	return &provider, nil
