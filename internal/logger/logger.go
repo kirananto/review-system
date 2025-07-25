@@ -27,7 +27,6 @@ func NewLogger(config *LogConfig) *Logger {
 		logLevel = getLogLevel(config.LogLevel)
 	}
 
-	zerolog.SetGlobalLevel(logLevel)
 	zerolog.TimestampFieldName = "T"
 	zerolog.LevelFieldName = "L"
 	zerolog.MessageFieldName = "M"
@@ -42,6 +41,7 @@ func NewLogger(config *LogConfig) *Logger {
 	logWriters := io.MultiWriter(writers...)
 
 	logger := zerolog.New(logWriters).
+		Level(logLevel).
 		With().
 		Str("P", "review-system-svc").
 		Str("C", "review-system").
