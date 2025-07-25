@@ -13,9 +13,15 @@ type S3Service interface {
 	GetObject(ctx context.Context, bucket, key string) (io.ReadCloser, error)
 }
 
+// awsS3Client defines the interface for the methods we use from the AWS S3 client.
+// This makes the service testable.
+type awsS3Client interface {
+	GetObject(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error)
+}
+
 // s3Client is an implementation of the S3Service interface.
 type s3Client struct {
-	client *s3.Client
+	client awsS3Client
 }
 
 // NewS3Service creates a new S3 service client.
