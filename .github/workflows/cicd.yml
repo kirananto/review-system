@@ -21,13 +21,18 @@ jobs:
         run: go mod vendor
 
       - name: 🧪 Run tests with coverage
-        run: go test -v -cover -coverprofile=coverage.out ./...
+        run: go test -v -cover -coverprofile=coverage.txt ./...
 
       - name: 📤 Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage.out
+          path: coverage.txt
+
+      - name: ☂️ Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: 🔑 Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
