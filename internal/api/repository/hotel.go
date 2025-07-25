@@ -47,7 +47,7 @@ func (r *reviewRepository) GetHotelByID(id uint) (*models.Hotel, error) {
 // GetHotelByName retrieves a hotel by its name.
 func (r *reviewRepository) GetHotelByName(name string) (*models.Hotel, error) {
 	var hotel models.Hotel
-	if err := r.db.Where("hotel_name = ?", name).First(&hotel).Error; err != nil {
+	if err := r.db.Model(&models.Hotel{}).Select("id").Where("hotel_name = ?", name).First(&hotel).Error; err != nil {
 		return nil, err
 	}
 	return &hotel, nil
