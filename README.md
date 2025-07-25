@@ -112,6 +112,7 @@ graph TD
 * **Secure:** Database credentials stored in AWS Secrets Manager.
 * **IaC:** Resources defined with SAM & CloudFormation.
 * **CI/CD**: CI/CD using Github Actions
+* **CodeCov Integration**: Coverage is recorded and tracked on [Codecov](https://codecov.io/github/kirananto/review-system)
 * **Zero-Downtime Deployments:** Blue-green releases with automated rollback.
 * **Local Development:** Dockerized PostgreSQL & easy setup.
 * **Auto-Generated Docs:** Swagger UI for API exploration.
@@ -237,6 +238,12 @@ curl http://localhost:8000/api/v1/reviews
   ```bash
    go test -v -cover -coverprofile=coverage.out ./...
   ```
+
+### Current Coverage is recorded on Codecov:
+https://codecov.io/github/kirananto/review-system
+
+![CodeCov](https://codecov.io/github/kirananto/review-system/graphs/tree.svg?token=ABR3HMGGG5)
+
 * **Integration Tests**
 
   * Use Docker Compose for DB.
@@ -316,7 +323,7 @@ A redrive policy has not been configured yet, but can be easily added based on t
 ## 🐊 Gochas & Current Limitations
 
 - Swagger Documentation works only on localhost
-- Currently only supports upto 25K Reviews in a single file upto ~40MB. To support more than that we need to do either of the above approaches:
+- Currently only supports upto 36K Reviews in a single file upto ~50MB. To support more than that we need to do either of the above approaches:
   - Fan out: Chunk into smaller groups of data by invoking lambdas or using Lambda Step functions.
   - Improve performance of a single lambda
 
